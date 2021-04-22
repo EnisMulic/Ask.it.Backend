@@ -1,0 +1,206 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Title: 'Ask.it.API'",
+    "title": "Ask.it.API",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5000",
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "jwt"
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "jwt"
+      }
+    },
+    "/api/questions": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "questions"
+      },
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "question"
+      }
+    },
+    "/api/questions/{id}": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "question"
+      },
+      "delete": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "bool"
+      }
+    },
+    "/api/questions/{id}/answers": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "answers"
+      },
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "answer"
+      }
+    },
+    "/api/questions/{id}/answers/{id}": {
+      "put": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "answer"
+      },
+      "delete": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "bool"
+      }
+    },
+    "/api/questions/{id}/answers/{id}/dislike": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "answer"
+      }
+    },
+    "/api/questions/{id}/answers/{id}/dislike/undo": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "answer"
+      }
+    },
+    "/api/questions/{id}/answers/{id}/like": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "answer"
+      }
+    },
+    "/api/questions/{id}/answers/{id}/like/undo": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "answer"
+      }
+    },
+    "/api/questions/{id}/dislike": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "question"
+      }
+    },
+    "/api/questions/{id}/dislike/undo": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "question"
+      }
+    },
+    "/api/questions/{id}/like": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "question"
+      }
+    },
+    "/api/questions/{id}/like/undo": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "question"
+      }
+    },
+    "/api/users": {
+      "get": {
+        "description": "Returns a list of users",
+        "tags": [
+          "users"
+        ],
+        "operationId": "users"
+      },
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "user"
+      }
+    },
+    "/api/users/change-password": {
+      "post": {
+        "description": "Change users password",
+        "tags": [
+          "users"
+        ],
+        "operationId": "bool"
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "description": "Returns information of the user that called the route",
+        "tags": [
+          "users"
+        ],
+        "operationId": "user"
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "description": "Returns a single user",
+        "tags": [
+          "users"
+        ],
+        "operationId": "user"
+      }
+    },
+    "/api/users/{id}/questions": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "questions"
+      }
+    }
+  }
+}
