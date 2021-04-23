@@ -15,12 +15,16 @@ func NewAuthController(l *log.Logger) *AuthController {
 
 // swagger:route POST /api/auth/login auth jwt
 //
+// responses:
+//	200: AuthResponse
 func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 
 }
 
 // swagger:route POST /api/auth/register auth jwt
 //
+// responses:
+//	200: AuthResponse
 func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 	
 }

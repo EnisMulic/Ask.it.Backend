@@ -21,7 +21,12 @@
         "tags": [
           "auth"
         ],
-        "operationId": "jwt"
+        "operationId": "jwt",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AuthResponse"
+          }
+        }
       }
     },
     "/api/auth/register": {
@@ -29,7 +34,12 @@
         "tags": [
           "auth"
         ],
-        "operationId": "jwt"
+        "operationId": "jwt",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AuthResponse"
+          }
+        }
       }
     },
     "/api/questions": {
@@ -37,13 +47,23 @@
         "tags": [
           "questions"
         ],
-        "operationId": "questions"
+        "operationId": "questions",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/QuestionsResponse"
+          }
+        }
       },
       "post": {
         "tags": [
           "questions"
         ],
-        "operationId": "question"
+        "operationId": "question",
+        "responses": {
+          "204": {
+            "$ref": "#/responses/QuestionResponse"
+          }
+        }
       }
     },
     "/api/questions/{id}": {
@@ -51,7 +71,12 @@
         "tags": [
           "questions"
         ],
-        "operationId": "question"
+        "operationId": "question",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/QuestionResponse"
+          }
+        }
       },
       "delete": {
         "tags": [
@@ -65,13 +90,23 @@
         "tags": [
           "questions"
         ],
-        "operationId": "answers"
+        "operationId": "answers",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AnswersResponse"
+          }
+        }
       },
       "post": {
         "tags": [
           "questions"
         ],
-        "operationId": "answer"
+        "operationId": "answer",
+        "responses": {
+          "204": {
+            "$ref": "#/responses/AnswerResponse"
+          }
+        }
       }
     },
     "/api/questions/{id}/answers/{id}": {
@@ -79,7 +114,12 @@
         "tags": [
           "questions"
         ],
-        "operationId": "answer"
+        "operationId": "answer",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AnswerResponse"
+          }
+        }
       },
       "delete": {
         "tags": [
@@ -158,13 +198,23 @@
         "tags": [
           "users"
         ],
-        "operationId": "users"
+        "operationId": "users",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UsersResponse"
+          }
+        }
       },
       "put": {
         "tags": [
           "users"
         ],
-        "operationId": "user"
+        "operationId": "user",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserResponse"
+          }
+        }
       }
     },
     "/api/users/change-password": {
@@ -182,7 +232,12 @@
         "tags": [
           "users"
         ],
-        "operationId": "user"
+        "operationId": "user",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserResponse"
+          }
+        }
       }
     },
     "/api/users/{id}": {
@@ -191,7 +246,12 @@
         "tags": [
           "users"
         ],
-        "operationId": "user"
+        "operationId": "user",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserResponse"
+          }
+        }
       }
     },
     "/api/users/{id}/questions": {
@@ -199,7 +259,158 @@
         "tags": [
           "users"
         ],
-        "operationId": "questions"
+        "operationId": "questions",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/QuestionsResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AnswerResponseModel": {
+      "type": "object",
+      "properties": {
+        "Content": {
+          "type": "string"
+        },
+        "CreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Dislikes": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "ID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "Likes": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "UpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "User": {
+          "$ref": "#/definitions/UserResponseModel"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "QuestionResponseModel": {
+      "type": "object",
+      "properties": {
+        "Answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AnswerResponseModel"
+          }
+        },
+        "Content": {
+          "type": "string"
+        },
+        "CreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Dislikes": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "ID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "Likes": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "UpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "User": {
+          "$ref": "#/definitions/UserResponseModel"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "UserResponseModel": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string"
+        },
+        "FirstName": {
+          "type": "string"
+        },
+        "ID": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "LastName": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    }
+  },
+  "responses": {
+    "AnswerResponse": {
+      "schema": {
+        "$ref": "#/definitions/AnswerResponseModel"
+      }
+    },
+    "AnswersResponse": {
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/AnswerResponseModel"
+        }
+      }
+    },
+    "AuthResponse": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "RefreshToken": {
+            "type": "string"
+          },
+          "Token": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "PagedResponse": {},
+    "QuestionResponse": {
+      "schema": {
+        "$ref": "#/definitions/QuestionResponseModel"
+      }
+    },
+    "QuestionsResponse": {
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/QuestionResponseModel"
+        }
+      }
+    },
+    "UserResponse": {
+      "schema": {
+        "$ref": "#/definitions/UserResponseModel"
+      }
+    },
+    "UsersResponse": {
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/UserResponseModel"
+        }
       }
     }
   }

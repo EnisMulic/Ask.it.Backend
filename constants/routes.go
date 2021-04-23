@@ -1,6 +1,6 @@
 package constants
 
-var (
+const (
 	ApiRoot = "/api"
 
 	AuthBaseRoute = ApiRoot + "/auth"

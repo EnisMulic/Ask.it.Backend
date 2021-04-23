@@ -5,6 +5,8 @@ import "gorm.io/gorm"
 type Answer struct {
 	gorm.Model
 	Content string
+	Likes int
+	Dislikes int
 	UserID uint
 	QuestionID uint
 }

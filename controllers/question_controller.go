@@ -16,18 +16,24 @@ func NewQuestionController(l *log.Logger) *QuestionController {
 
 // swagger:route GET /api/questions questions questions 
 //
+// responses:
+//	200: QuestionsResponse
 func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 
 }
 
 // swagger:route GET /api/questions/{id} questions question
 //
+// responses:
+//	200: QuestionResponse
 func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 
 }
 
 // swagger:route POST /api/questions questions question
 //
+// responses:
+//	204: QuestionResponse
 func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 
 }
@@ -64,18 +70,24 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 
 // swagger:route GET /api/questions/{id}/answers questions answers
 //
+// responses:
+//	200: AnswersResponse
 func (qc *QuestionController) GetAnswers (rw http.ResponseWriter, r *http.Request) {
 
 }
 
 // swagger:route POST /api/questions/{id}/answers questions answer
 //
+// responses:
+//	204: AnswerResponse
 func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Request) {
 
 }
 
 // swagger:route PUT /api/questions/{id}/answers/{id} questions answer
 //
+// responses:
+//	200: AnswerResponse
 func (qc *QuestionController) EditAnswer (rw http.ResponseWriter, r *http.Request) {
 
 }

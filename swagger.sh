@@ -1,1 +1,5 @@
-swagger generate spec -c docs -c controllers -o ./swaggerui/swagger.json --scan-models
+swagger generate spec \
+    -c docs \
+    -c controllers \
+    -c responses \
+    -o ./swaggerui/swagger.json --scan-models
