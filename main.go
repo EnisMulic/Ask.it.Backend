@@ -36,10 +36,11 @@ func main() {
 	database.Migrate(db)
 
 	userRepo := repositories.NewUserRepository(db)
-
+	
+	authSevice := services.NewAuthService(userRepo)
 	userService := services.NewUserService(userRepo)
 
-	ac := controllers.NewAuthController(logger)
+	ac := controllers.NewAuthController(logger, authSevice)
 	uc := controllers.NewUserController(logger, userService)
 	qc := controllers.NewQuestionController(logger)
 

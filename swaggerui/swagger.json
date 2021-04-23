@@ -35,6 +35,12 @@
           "auth"
         ],
         "operationId": "jwt",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body"
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/AuthResponse"
@@ -362,6 +368,24 @@
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "RegisterRequest": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string"
+        },
+        "FirstName": {
+          "type": "string"
+        },
+        "LastName": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
     },
     "UserResponseModel": {
       "type": "object",

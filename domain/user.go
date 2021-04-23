@@ -7,7 +7,8 @@ type User struct {
 	FirstName string
 	LastName  string
 	Email     string `gorm:"uniqueIndex;size:320"`
-	Password  string
+	PasswordSalt  string
+	PasswordHash  string
 	Questions []Question
 	Answers []Answer
 	QuestionRatings []Question `gorm:"many2many:user_question_ratings;"`
