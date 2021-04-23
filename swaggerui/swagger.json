@@ -199,6 +199,16 @@
           "users"
         ],
         "operationId": "users",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query"
+          },
+          {
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/UsersResponse"
@@ -300,6 +310,20 @@
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "PaginationQuery": {
+      "type": "object",
+      "properties": {
+        "PageNumber": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "PageSize": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
     },
     "QuestionResponseModel": {
       "type": "object",

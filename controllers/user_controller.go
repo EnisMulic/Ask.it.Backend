@@ -1,11 +1,16 @@
 package controllers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/services"
+	"github.com/gorilla/schema"
 )
+
+var decoder = schema.NewDecoder()
 
 type UserController struct {
 	l *log.Logger
@@ -19,10 +24,31 @@ func NewUserController(l *log.Logger, us *services.UserService) *UserController 
 // swagger:route GET /api/users users users
 // Returns a list of users
 //
+// parameters:
+// + name: pageNumber
+//	 in: query
+//	 schema: int
+// + name: pageSize
+//	 in: query
+//	 schema: int
 // responses:
 //	200: UsersResponse
 func (uc *UserController) Get(rw http.ResponseWriter, r *http.Request) {
+	var request requests.UserSearchRequest
 
+	err := decoder.Decode(&request, r.URL.Query())
+    if err != nil {
+        log.Println("Error in GET parameters : ", err)
+		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+		return
+    } 
+
+	users := uc.us.Get(request)
+
+	err = json.NewEncoder(rw).Encode(users)
+	if err != nil {
+		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+	}
 }
 
 // swagger:route GET /api/users/{id} users user

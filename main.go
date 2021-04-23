@@ -9,6 +9,8 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/constants"
 	"github.com/EnisMulic/Ask.it.Backend/controllers"
 	"github.com/EnisMulic/Ask.it.Backend/database"
+	"github.com/EnisMulic/Ask.it.Backend/repositories"
+	"github.com/EnisMulic/Ask.it.Backend/services"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -33,8 +35,12 @@ func main() {
 	
 	database.Migrate(db)
 
+	userRepo := repositories.NewUserRepository(db)
+
+	userService := services.NewUserService(userRepo)
+
 	ac := controllers.NewAuthController(logger)
-	uc := controllers.NewUserController(logger)
+	uc := controllers.NewUserController(logger, userService)
 	qc := controllers.NewQuestionController(logger)
 
 	r := mux.NewRouter()
