@@ -8,8 +8,11 @@ import (
 
 	"github.com/EnisMulic/Ask.it.Backend/constants"
 	"github.com/EnisMulic/Ask.it.Backend/controllers"
+	"github.com/EnisMulic/Ask.it.Backend/database"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -21,7 +24,14 @@ func main() {
 
 	logger := log.New(os.Stdout, "ask.it.api", log.LstdFlags)
 
-	addr := os.Getenv("API_ADDRESS")
+	dsn := os.Getenv("CONNECTION_STRING")
+	db, dbErr := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	
+	if dbErr != nil {
+		log.Fatalf(dbErr.Error())
+	}
+	
+	database.Migrate(db)
 
 	ac := controllers.NewAuthController(logger)
 	uc := controllers.NewUserController(logger)
@@ -76,6 +86,7 @@ func main() {
 
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swaggerui/"))))
 
+	addr := os.Getenv("API_ADDRESS")
 	srv := &http.Server {
 		Handler: r,
 		Addr: addr,
