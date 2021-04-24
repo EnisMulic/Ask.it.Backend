@@ -1,17 +1,22 @@
 package controllers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+	"github.com/EnisMulic/Ask.it.Backend/services"
 )
 
 
 type QuestionController struct {
 	l *log.Logger
+	qs *services.QuestionService
 }
 
-func NewQuestionController(l *log.Logger) *QuestionController {
-	return &QuestionController{l}
+func NewQuestionController(l *log.Logger, qs *services.QuestionService) *QuestionController {
+	return &QuestionController{l, qs}
 }
 
 // swagger:route GET /api/questions questions questions 
@@ -19,7 +24,21 @@ func NewQuestionController(l *log.Logger) *QuestionController {
 // responses:
 //	200: QuestionsResponse
 func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
+	var request requests.QuestionSearchRequest
 
+	err := decoder.Decode(&request, r.URL.Query())
+    if err != nil {
+        log.Println("Error in GET parameters : ", err)
+		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+		return
+    } 
+
+	users := qc.qs.Get(request)
+
+	err = json.NewEncoder(rw).Encode(users)
+	if err != nil {
+		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+	}
 }
 
 // swagger:route GET /api/questions/{id} questions question
