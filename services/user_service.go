@@ -6,10 +6,10 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/repositories"
+	"github.com/EnisMulic/Ask.it.Backend/utils"
 )
 
 var ErrorUserNotFound error = errors.New("user not found")
-
 type UserService struct {
 	repo *repositories.UserRepository
 }
@@ -23,12 +23,7 @@ func (us *UserService) Get (search requests.UserSearchRequest) responses.UsersRe
 
 	var response []responses.UserResponseModel
 	for _, user := range users {
-		userResponse := responses.UserResponseModel{
-			ID: user.ID,
-			FirstName: user.FirstName,
-			LastName: user.LastName,
-			Email: user.Email,
-		}
+		userResponse := utils.ConvertToUserResponseModel(user)
 
 		response = append(response, userResponse)
 	}
@@ -44,18 +39,13 @@ func (us *UserService) GetById (id uint) (*responses.UserResponse, *responses.Er
 			FieldName: "",
 			Message: ErrorUserNotFound.Error(),
 		}
-		
+
 		errors := responses.NewErrorResponse(err)	
 
 		return nil, errors
 	}
 
-	response := responses.UserResponseModel{
-		ID: user.ID,
-		FirstName: user.FirstName,
-		LastName: user.LastName,
-		Email: user.Email,
-	}
+	response := utils.ConvertToUserResponseModel(user)
 
 	return &responses.UserResponse{Data: response}, nil
 }
