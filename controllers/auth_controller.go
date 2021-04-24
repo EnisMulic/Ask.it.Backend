@@ -36,7 +36,7 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 
 	res, resErr := ac.as.Login(req)
 	if resErr != nil {
-		http.Error(rw, "", http.StatusInternalServerError)
+		http.Error(rw, resErr.Error(), http.StatusInternalServerError)
 		return
 	}
 

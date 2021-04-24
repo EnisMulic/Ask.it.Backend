@@ -6,13 +6,14 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/domain"
 	"github.com/EnisMulic/Ask.it.Backend/repositories"
-	"github.com/EnisMulic/Ask.it.Backend/utils"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -104,23 +105,27 @@ func doPasswordsMatch(passwordHash string, currPassword string, salt string) boo
 }
 
 func generateJWT(user domain.User) (string, error) {
-	secretKey, err := utils.GetEnvVariable("SECRET_KEY")
+	secretKey := []byte(os.Getenv("JWT_SECRET_KEY"))
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	claims := token.Claims.(jwt.MapClaims)
+
+	tokenLifetime, err := strconv.Atoi(os.Getenv("JWT_TOKEN_LIFETIME_IN_MINUTES"))
 
 	if err != nil {
 		return "", err
 	}
 
-	sk := []byte(secretKey)
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-
-	claims["authorized"] = true
-	claims["user_id"] = user.ID
+	claims["iss"] = os.Getenv("JWT_ISSUER")
+	claims["aud"] = os.Getenv("JWT_AUDIENCE")
+	claims["sub"] = user.ID
+	claims["iat"] = time.Now().Unix()
+	claims["nbf"] = time.Now().Unix()
+	claims["exp"] = time.Now().Add(time.Second * time.Duration(tokenLifetime)).Unix()
+	
 	claims["email"] = user.Email
-	claims["exp"] = time.Now().Add(time.Minute * 60).Unix()
 
-	tokenString, err := token.SignedString(sk)
+	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
 		log.Println("Error in JWT token generation")
 		return "", err
