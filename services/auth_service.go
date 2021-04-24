@@ -118,10 +118,10 @@ func generateJWT(user domain.User) (string, error) {
 
 	claims["iss"] = os.Getenv("JWT_ISSUER")
 	claims["aud"] = os.Getenv("JWT_AUDIENCE")
-	claims["sub"] = user.ID
-	claims["iat"] = time.Now().Unix()
-	claims["nbf"] = time.Now().Unix()
-	claims["exp"] = time.Now().Add(time.Second * time.Duration(tokenLifetime)).Unix()
+	claims["sub"] = fmt.Sprint(user.ID)
+	claims["iat"] = fmt.Sprint(time.Now().Unix())
+	claims["nbf"] = fmt.Sprint(time.Now().Unix())
+	claims["exp"] = fmt.Sprint(time.Now().Add(time.Second * time.Duration(tokenLifetime)).Unix())
 	
 	claims["email"] = user.Email
 
