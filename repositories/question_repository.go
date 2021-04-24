@@ -26,3 +26,9 @@ func (ur *QuestionRepository) GetPaged (search requests.QuestionSearchRequest) [
 
 	return questions
 }
+
+func (ur *QuestionRepository) GetById (id uint) domain.Question {
+	var question domain.Question
+	ur.db.Joins("User").First(&question, id)
+	return question
+}

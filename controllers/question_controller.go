@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/services"
+	"github.com/gorilla/mux"
 )
 
 
@@ -46,7 +49,38 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 // responses:
 //	200: QuestionResponse
 func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	user, errRes := qc.qs.GetById(uint(id))
+
+	if errRes != nil {
+		out, _ := json.Marshal(errRes)
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	err = json.NewEncoder(rw).Encode(user)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+	}
 }
 
 // swagger:route POST /api/questions questions question

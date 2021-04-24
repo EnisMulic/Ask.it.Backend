@@ -8,5 +8,6 @@ type Question struct {
 	Likes int
 	Dislikes int
 	UserID uint
+	User User
 	Answers []Answer
 }
