@@ -27,8 +27,10 @@ func (ur *UserRepository) GetPaged (search requests.UserSearchRequest) []domain.
 	return users
 }
 
-func (ur *UserRepository) GetById (id int) {
-
+func (ur *UserRepository) GetById (id uint) domain.User {
+	var user domain.User
+	ur.db.First(&user, id)
+	return user
 }
 
 func (ur *UserRepository) GetByEmail (email string) (domain.User, error) {

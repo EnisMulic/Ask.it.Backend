@@ -2,13 +2,19 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/services"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 )
+
+var ErrorUnableToMarshalJson = errors.New("unable to marshal json")
 
 var decoder = schema.NewDecoder()
 
@@ -57,7 +63,38 @@ func (uc *UserController) Get(rw http.ResponseWriter, r *http.Request) {
 // responses:
 //	200: UserResponse
 func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	user, errRes := uc.us.GetById(uint(id))
+
+	if errRes != nil {
+		out, _ := json.Marshal(errRes)
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	err = json.NewEncoder(rw).Encode(user)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+	}
 }
 
 // swagger:route GET /api/users/me users user
