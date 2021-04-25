@@ -101,3 +101,20 @@ func (qs *QuestionService) Delete (questionId uint, userId uint) *responses.Erro
 	qs.repo.Delete(question)
 	return nil
 }
+
+func (qs *QuestionService) Like (questionId uint, userId uint) *responses.ErrorResponse {
+	err := qs.repo.Like(questionId, userId)
+	
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: "An error occurred",
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	return nil
+}

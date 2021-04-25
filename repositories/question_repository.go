@@ -55,3 +55,14 @@ func (ur *QuestionRepository) Create (question domain.Question) (domain.Question
 func (ur *QuestionRepository) Delete (question domain.Question) {
 	ur.db.Delete(&question)
 }
+
+func (ur *QuestionRepository) Like (questionId uint, userId uint) error {
+	like := domain.UserQuestionRating{
+		UserID: userId,
+		QuestionID: questionId,
+		IsLiked: true,
+	}
+
+	result := ur.db.Create(&like)
+	return result.Error
+}
