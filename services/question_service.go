@@ -21,7 +21,16 @@ func NewQuestionService(repo *repositories.QuestionRepository) *QuestionService 
 } 
 
 func (qs *QuestionService) Get (search requests.QuestionSearchRequest) responses.QuestionsReponse {
-	questions := qs.repo.GetPaged(search)
+	var filter repositories.QuestionFilter
+
+	if (search != requests.QuestionSearchRequest{}) {
+		filter = repositories.QuestionFilter{
+			PageNumber: search.PageNumber,
+			PageSize: search.PageSize,
+		}
+	}
+
+	questions := qs.repo.GetPaged(filter)
 
 	var response []responses.QuestionResponseModel
 	for _, question := range questions {
