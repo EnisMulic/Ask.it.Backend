@@ -54,6 +54,18 @@ func (us *UserService) GetById (id uint) (*responses.UserResponse, *responses.Er
 }
 
 func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*responses.UserResponse, *responses.ErrorResponse){
+	user := us.repo.GetById(id)
+
+	if user.ID == 0 {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: ErrorUserNotFound.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
+	}
 
 	updatedUser := domain.User{
 		FirstName: req.FirstName,
@@ -61,7 +73,7 @@ func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*respons
 		Email: req.Email,
 	}
 
-	user, err := us.repo.Update(id, updatedUser)
+	user, err := us.repo.Update(user, updatedUser)
 
 	if err != nil {
 		strErr := err.Error()

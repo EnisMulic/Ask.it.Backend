@@ -48,8 +48,7 @@ func (ur *UserRepository) Create (user domain.User) (domain.User, error) {
 	return user, result.Error
 }
 
-func (ur *UserRepository) Update (id uint, updatedUser domain.User) (domain.User, error) {
-	user := ur.GetById(id)
+func (ur *UserRepository) Update (user domain.User, updatedUser domain.User) (domain.User, error) {
 	result := ur.db.Model(&user).Updates(domain.User{
 		FirstName: updatedUser.FirstName,
 		LastName: updatedUser.LastName,
