@@ -37,3 +37,7 @@ func (ur *QuestionRepository) Create (question domain.Question) (domain.Question
 	result := ur.db.Create(&question)
 	return question, result.Error
 }
+
+func (ur *QuestionRepository) Delete (question domain.Question) {
+	ur.db.Delete(&question)
+}

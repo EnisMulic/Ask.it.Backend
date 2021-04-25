@@ -74,3 +74,21 @@ func (qs *QuestionService) Create (userId uint, req requests.QuestionInsertReque
 	
 	return &responses.QuestionResponse{Data: response}, nil
 }
+
+func (qs *QuestionService) Delete (questionId uint, userId uint) *responses.ErrorResponse {
+	question := qs.repo.GetById(questionId)
+
+	if question.UserID != userId {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: "You do not have permission to delete this question",
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	qs.repo.Delete(question)
+	return nil
+}

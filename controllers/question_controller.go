@@ -148,7 +148,48 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 // swagger:route DELETE /api/questions/{id} questions bool
 //
 func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+	
+	sub, err := utils.ExtractSubFromJwt(r)
+	
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	resErr := qc.qs.Delete(uint(id), uint(userId))
+	if resErr != nil {
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	rw.WriteHeader(http.StatusNoContent)
 }
 
 // swagger:route POST /api/questions/{id}/like questions question
