@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/EnisMulic/Ask.it.Backend/constants"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/services"
+	"github.com/EnisMulic/Ask.it.Backend/utils"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 )
@@ -117,7 +119,60 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 // responses:
 //	200: UserResponse
 func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
+	sub, err := utils.ExtractSubFromJwt(r)
 
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	id, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	var req requests.UserUpdateRequest
+
+	decoder := json.NewDecoder(r.Body)
+	
+	err = decoder.Decode(&req)
+    if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.UnableToParseJSONBody,
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+    } 
+
+	user, errRes := uc.us.Update(uint(id), req)
+
+	if errRes != nil {
+		out, _ := json.Marshal(errRes)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return;
+	}
+
+	err = json.NewEncoder(rw).Encode(user)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+	}
 }
 
 // swagger:route GET /api/users/{id}/questions users questions

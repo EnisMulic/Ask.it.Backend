@@ -5,6 +5,12 @@ type UserSearchRequest struct {
 	*PaginationQuery
 }
 
+type UserUpdateRequest struct {
+	FirstName string `schema:"firstName"`
+	LastName string `schema:"lastName"`
+	Email string `schema:"email"`
+}
+
 // swagger:model RegisterRequest
 type RegisterRequest struct {
 	FirstName string `schema:"firstName"`
