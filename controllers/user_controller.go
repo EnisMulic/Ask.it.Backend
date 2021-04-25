@@ -111,7 +111,49 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 // swagger:route POST /api/users/change-password users bool
 // Change users password
 func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request) {
+	sub, err := utils.ExtractSubFromJwt(r)
 
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	id, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	var req requests.ChangePasswordRequest
+
+	decoder := json.NewDecoder(r.Body)
+	
+	err = decoder.Decode(&req)
+    if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.UnableToParseJSONBody,
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+    } 
+
+	errRes := uc.us.ChangePassword(uint(id), req)
+
+	if errRes != nil {
+		out, _ := json.Marshal(errRes)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return;
+	}
 }
 
 // swagger:route PUT /api/users users user

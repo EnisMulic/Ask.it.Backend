@@ -81,3 +81,53 @@ func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*respons
 
 	return &responses.UserResponse{Data: response}, nil
 }
+
+func (us *UserService) ChangePassword(id uint, req requests.ChangePasswordRequest) *responses.ErrorResponse {
+	user := us.repo.GetById(id)
+
+	if user.ID == 0 {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: ErrorUserNotFound.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	if !doPasswordsMatch(user.PasswordHash, req.Password, user.PasswordSalt) {
+		err := responses.ErrorResponseModel{
+			FieldName: "password",
+			Message: constants.ErrorWrongPassword,
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	salt := generateRandomSalt(saltSize)
+	hash := hashPassword(req.NewPassword, salt)
+
+
+	updatedUser := domain.User{
+		PasswordSalt: salt,
+		PasswordHash: hash,
+	}
+
+	user, err := us.repo.ChangePassword(user, updatedUser)
+
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: err.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	return nil
+}

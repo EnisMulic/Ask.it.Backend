@@ -23,3 +23,8 @@ type LoginRequest struct {
 	Email string `schema:"email"`
 	Password string `schema:"password"`
 }
+
+type ChangePasswordRequest struct {
+	Password string `schema:"password"`
+	NewPassword string `schame:"newPassword"`
+}

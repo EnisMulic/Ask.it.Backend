@@ -58,3 +58,12 @@ func (ur *UserRepository) Update (id uint, updatedUser domain.User) (domain.User
 
 	return user, result.Error
 }
+
+func (ur *UserRepository) ChangePassword (user domain.User, updatedUser domain.User) (domain.User, error) {
+	result := ur.db.Model(&user).Updates(domain.User{
+		PasswordSalt: updatedUser.PasswordSalt,
+		PasswordHash: updatedUser.PasswordHash,
+	})
+
+	return user, result.Error
+}
