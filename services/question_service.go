@@ -5,6 +5,7 @@ import (
 
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+	"github.com/EnisMulic/Ask.it.Backend/domain"
 	"github.com/EnisMulic/Ask.it.Backend/repositories"
 	"github.com/EnisMulic/Ask.it.Backend/utils"
 )
@@ -47,5 +48,29 @@ func (qs *QuestionService) GetById (id uint) (*responses.QuestionResponse, *resp
 
 	response := utils.ConvertToQuestionResponseModel(question)
 
+	return &responses.QuestionResponse{Data: response}, nil
+}
+
+func (qs *QuestionService) Create (userId uint, req requests.QuestionInsertRequest) (*responses.QuestionResponse, *responses.ErrorResponse) {
+	question := domain.Question{
+		Content: req.Content,
+		UserID: userId,
+	}
+
+	newQuestion, err := qs.repo.Create(question)
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: err.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
+	}
+
+	newQuestion = qs.repo.GetById(newQuestion.ID)
+	response := utils.ConvertToQuestionResponseModel(newQuestion)
+	
 	return &responses.QuestionResponse{Data: response}, nil
 }

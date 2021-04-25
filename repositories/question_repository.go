@@ -32,3 +32,8 @@ func (ur *QuestionRepository) GetById (id uint) domain.Question {
 	ur.db.Joins("User").First(&question, id)
 	return question
 }
+
+func (ur *QuestionRepository) Create (question domain.Question) (domain.Question, error) {
+	result := ur.db.Create(&question)
+	return question, result.Error
+}

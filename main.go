@@ -72,7 +72,7 @@ func main() {
 	
 	questionsPostRouter := r.Methods(http.MethodPost).Subrouter()
 
-	questionsPostRouter.HandleFunc(constants.CreateQuestionRoute, qc.CreateAnswer)
+	questionsPostRouter.HandleFunc(constants.CreateQuestionRoute, qc.Create)
 
 	questionsPostRouter.HandleFunc(constants.LikeQuestionRoute, qc.Like)
 	questionsPostRouter.HandleFunc(constants.LikeQuestionUndoRoute, qc.LikeUndo)

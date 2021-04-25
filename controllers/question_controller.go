@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/EnisMulic/Ask.it.Backend/constants"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/services"
+	"github.com/EnisMulic/Ask.it.Backend/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -88,7 +90,59 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 // responses:
 //	204: QuestionResponse
 func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
+	sub, err := utils.ExtractSubFromJwt(r)
+	
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
 
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	var req requests.QuestionInsertRequest
+
+	decoder := json.NewDecoder(r.Body)
+	
+	err = decoder.Decode(&req)
+    if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.UnableToParseJSONBody,
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+    } 
+
+	question, resErr := qc.qs.Create(uint(userId), req)
+	if resErr != nil {
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(rw).Encode(question)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+	}
 }
 
 // swagger:route DELETE /api/questions/{id} questions bool
