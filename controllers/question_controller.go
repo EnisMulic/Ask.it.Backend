@@ -240,7 +240,46 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 // swagger:route POST /api/questions/{id}/like/undo questions question
 //
 func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+	
+	sub, err := utils.ExtractSubFromJwt(r)
+	
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	resErr := qc.qs.LikeUndo(uint(id), uint(userId))
+	if resErr != nil {
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
 }
 
 // swagger:route POST /api/questions/{id}/dislike questions question

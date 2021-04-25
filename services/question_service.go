@@ -118,3 +118,20 @@ func (qs *QuestionService) Like (questionId uint, userId uint) *responses.ErrorR
 
 	return nil
 }
+
+func (qs *QuestionService) LikeUndo (questionId uint, userId uint) *responses.ErrorResponse {
+	err := qs.repo.LikeUndo(questionId, userId)
+	
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: "An error occurred",
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	return nil
+}

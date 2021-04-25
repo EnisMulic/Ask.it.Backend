@@ -66,3 +66,14 @@ func (ur *QuestionRepository) Like (questionId uint, userId uint) error {
 	result := ur.db.Create(&like)
 	return result.Error
 }
+
+func (ur *QuestionRepository) LikeUndo (questionId uint, userId uint) error {
+	like := domain.UserQuestionRating{
+		UserID: userId,
+		QuestionID: questionId,
+		IsLiked: true,
+	}
+
+	result := ur.db.Delete(&like)
+	return result.Error
+}
