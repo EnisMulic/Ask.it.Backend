@@ -39,7 +39,7 @@ func main() {
 	questionRepo := repositories.NewQuestionRepository(db)
 	
 	authSevice := services.NewAuthService(userRepo)
-	userService := services.NewUserService(userRepo)
+	userService := services.NewUserService(userRepo, questionRepo)
 	questionService := services.NewQuestionService(questionRepo)
 
 	ac := controllers.NewAuthController(logger, authSevice)

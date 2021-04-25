@@ -222,5 +222,44 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 // responses:
 //	200: QuestionsResponse
 func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) {
+	var request requests.QuestionSearchRequest
 
+	err := decoder.Decode(&request, r.URL.Query())
+    if err != nil {
+		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+		return
+    } 
+
+	vars := mux.Vars(r)
+
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	questions, errRes := uc.us.GetQuestions(uint(id), request)
+	if errRes != nil {
+		out, _ := json.Marshal(errRes)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return;
+	}
+
+	err = json.NewEncoder(rw).Encode(questions)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+	}
 }

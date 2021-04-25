@@ -14,15 +14,16 @@ import (
 
 var ErrorUserNotFound error = errors.New("user not found")
 type UserService struct {
-	repo *repositories.UserRepository
+	userRepo *repositories.UserRepository
+	questionRepo *repositories.QuestionRepository
 }
 
-func NewUserService(repo *repositories.UserRepository) *UserService {
-	return &UserService{repo}
+func NewUserService(userRepo *repositories.UserRepository, questionRepo *repositories.QuestionRepository) *UserService {
+	return &UserService{userRepo, questionRepo}
 } 
 
 func (us *UserService) Get (search requests.UserSearchRequest) responses.UsersResponse {
-	users := us.repo.GetPaged(search)
+	users := us.userRepo.GetPaged(search)
 
 	var response []responses.UserResponseModel
 	for _, user := range users {
@@ -35,7 +36,7 @@ func (us *UserService) Get (search requests.UserSearchRequest) responses.UsersRe
 }
 
 func (us *UserService) GetById (id uint) (*responses.UserResponse, *responses.ErrorResponse) {
-	user := us.repo.GetById(id)
+	user := us.userRepo.GetById(id)
 
 	if user.ID == 0 {
 		err := responses.ErrorResponseModel{
@@ -54,7 +55,7 @@ func (us *UserService) GetById (id uint) (*responses.UserResponse, *responses.Er
 }
 
 func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*responses.UserResponse, *responses.ErrorResponse){
-	user := us.repo.GetById(id)
+	user := us.userRepo.GetById(id)
 
 	if user.ID == 0 {
 		err := responses.ErrorResponseModel{
@@ -73,7 +74,7 @@ func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*respons
 		Email: req.Email,
 	}
 
-	user, err := us.repo.Update(user, updatedUser)
+	user, err := us.userRepo.Update(user, updatedUser)
 
 	if err != nil {
 		strErr := err.Error()
@@ -95,7 +96,7 @@ func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*respons
 }
 
 func (us *UserService) ChangePassword(id uint, req requests.ChangePasswordRequest) *responses.ErrorResponse {
-	user := us.repo.GetById(id)
+	user := us.userRepo.GetById(id)
 
 	if user.ID == 0 {
 		err := responses.ErrorResponseModel{
@@ -128,7 +129,7 @@ func (us *UserService) ChangePassword(id uint, req requests.ChangePasswordReques
 		PasswordHash: hash,
 	}
 
-	user, err := us.repo.ChangePassword(user, updatedUser)
+	user, err := us.userRepo.ChangePassword(user, updatedUser)
 
 	if err != nil {
 		err := responses.ErrorResponseModel{
@@ -142,4 +143,40 @@ func (us *UserService) ChangePassword(id uint, req requests.ChangePasswordReques
 	}
 
 	return nil
+}
+
+func (us *UserService) GetQuestions (userId uint, search requests.QuestionSearchRequest) (*responses.QuestionsReponse, *responses.ErrorResponse) {
+	user := us.userRepo.GetById(userId)
+
+	if user.ID == 0 {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: ErrorUserNotFound.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
+	}
+
+	var filter repositories.QuestionFilter
+
+	if (search != requests.QuestionSearchRequest{}) {
+		filter = repositories.QuestionFilter{
+			PageNumber: search.PageNumber,
+			PageSize: search.PageSize,
+		}
+	}
+
+	filter.UserID = userId
+
+	questions := us.questionRepo.GetPaged(filter)
+
+	var response []responses.QuestionResponseModel
+	for _, question := range questions {
+		questionResponse := utils.ConvertToQuestionResponseModel(question)
+		response = append(response, questionResponse)
+	}
+
+	return &responses.QuestionsReponse{Data: response}, nil
 }

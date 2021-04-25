@@ -17,7 +17,7 @@ func NewQuestionRepository(db *gorm.DB) *QuestionRepository {
 type QuestionFilter struct {
 	PageNumber int
 	PageSize int
-	UserID int
+	UserID uint
 }
 
 func (ur *QuestionRepository) GetPaged (filter QuestionFilter) []domain.Question {
@@ -31,7 +31,7 @@ func (ur *QuestionRepository) GetPaged (filter QuestionFilter) []domain.Question
 		}
 
 		if filter.PageNumber > 0 && filter.PageSize > 0 {
-			query = query.Limit(filter.PageNumber).Offset((filter.PageNumber - 1) * filter.PageSize)
+			query = query.Limit(filter.PageSize).Offset((filter.PageNumber - 1) * filter.PageSize)
 		}
 	}
 	

@@ -19,7 +19,7 @@ func (ur *UserRepository) GetPaged (search requests.UserSearchRequest) []domain.
 	var users []domain.User
 	query := ur.db
 	if (requests.UserSearchRequest{} != search) && search.PageNumber > 0 && search.PageSize > 0 {
-		query = query.Limit(search.PageNumber).Offset((search.PageNumber - 1) * search.PageSize)
+		query = query.Limit(search.PageSize).Offset((search.PageNumber - 1) * search.PageSize)
 	}
 
 	query.Find(&users)
