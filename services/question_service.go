@@ -50,7 +50,7 @@ func (qs *QuestionService) Get (search requests.QuestionSearchRequest) responses
 }
 
 func (qs *QuestionService) GetById (id uint) (*responses.QuestionResponse, *responses.ErrorResponse) {
-	question := qs.repo.GetById(id)
+	question, _ := qs.repo.GetById(id)
 
 	if question.ID == 0 {
 		err := responses.ErrorResponseModel{
@@ -86,14 +86,25 @@ func (qs *QuestionService) Create (userId uint, req requests.QuestionInsertReque
 		return nil, errors
 	}
 
-	newQuestion = qs.repo.GetById(newQuestion.ID)
+	newQuestion, _ = qs.repo.GetById(newQuestion.ID)
 	response := utils.ConvertToQuestionResponseModel(newQuestion)
 	
 	return &responses.QuestionResponse{Data: response}, nil
 }
 
 func (qs *QuestionService) Delete (questionId uint, userId uint) *responses.ErrorResponse {
-	question := qs.repo.GetById(questionId)
+	question, _ := qs.repo.GetById(questionId)
+
+	if question.ID == 0 {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: ErrorQuestionNotFound.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
 
 	if question.UserID != userId {
 		err := responses.ErrorResponseModel{

@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/EnisMulic/Ask.it.Backend/domain"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 
@@ -41,10 +42,10 @@ func (ur *QuestionRepository) GetPaged (filter QuestionFilter) []domain.Question
 	return questions
 }
 
-func (ur *QuestionRepository) GetById (id uint) domain.Question {
+func (ur *QuestionRepository) GetById (id uint) (domain.Question, error) {
 	var question domain.Question
-	ur.db.Joins("User").First(&question, id)
-	return question
+	result := ur.db.Preload("Answers.User").Preload(clause.Associations).First(&question, id)
+	return question, result.Error
 }
 
 func (ur *QuestionRepository) Create (question domain.Question) (domain.Question, error) {

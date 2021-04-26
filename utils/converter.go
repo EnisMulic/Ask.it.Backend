@@ -22,6 +22,7 @@ func ConvertToQuestionResponseModel(question domain.Question) responses.Question
 		Likes: question.Likes,
 		Dislikes: question.Dislikes,
 		User: ConvertToUserResponseModel(question.User),
+		Answers: ConvertToAnswerResponseModels(question.Answers),
 	}
 }
 
