@@ -43,10 +43,12 @@ func main() {
 	authSevice := services.NewAuthService(userRepo)
 	userService := services.NewUserService(userRepo, questionRepo)
 	questionService := services.NewQuestionService(questionRepo, questionRatingRepo, answerRepo)
+	answerService := services.NewAnswerRepository(answerRepo)
 
 	ac := controllers.NewAuthController(logger, authSevice)
 	uc := controllers.NewUserController(logger, userService)
 	qc := controllers.NewQuestionController(logger, questionService)
+	answc := controllers.NewAnswerController(answerService)
 
 	r := mux.NewRouter()
 
@@ -83,18 +85,24 @@ func main() {
 	questionsPostRouter.HandleFunc(constants.DislikeQuestionRoute, qc.Dislike)
 	questionsPostRouter.HandleFunc(constants.DislikeQuestionUndoRoute, qc.DislikeUndo)
 
-	questionsPostRouter.HandleFunc(constants.LikeQuestionAnswerRoute, qc.LikeAnswer)
-	questionsPostRouter.HandleFunc(constants.LikeQuestionAnswerUndoRoute, qc.LikeAnswerUndo)
-	
-	questionsPostRouter.HandleFunc(constants.DislikeQuestionAnswerRoute, qc.DislikeAnswer)
-	questionsPostRouter.HandleFunc(constants.DislikeQuestionAnswerUndoRoute, qc.DislikeAnswerUndo)
-
-	questionsPutRouter := r.Methods(http.MethodPut).Subrouter()
-	questionsPutRouter.HandleFunc(constants.UpdateQuestionAnswerRoute, qc.UpdateAnswer)
-
 	questionsDeleteRouter := r.Methods(http.MethodDelete).Subrouter()
 	questionsDeleteRouter.HandleFunc(constants.DeleteQuestionRoute, qc.Delete)
-	questionsDeleteRouter.HandleFunc(constants.DeleteQuestionAnswerRoute, qc.DeleteAnswer)
+	
+	// answer routers
+	answerPostRouter := r.Methods(http.MethodPost).Subrouter()
+	answerPostRouter.HandleFunc(constants.LikeAnswerRoute, answc.Like)
+	answerPostRouter.HandleFunc(constants.LikeAnswerUndoRoute, answc.LikeUndo)
+	
+	questionsPostRouter.HandleFunc(constants.DislikeAnswerRoute, answc.Dislike)
+	questionsPostRouter.HandleFunc(constants.DislikeAnswerUndoRoute, answc.DislikeUndo)
+
+	answerPutRouter := r.Methods(http.MethodPut).Subrouter()
+	answerPutRouter.HandleFunc(constants.UpdateAnswerRoute, answc.Update)
+
+	
+
+	answerDeleteRouter := r.Methods(http.MethodDelete).Subrouter()
+	answerDeleteRouter.HandleFunc(constants.DeleteAnswerRoute, answc.Delete)
 
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swaggerui/"))))
 

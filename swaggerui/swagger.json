@@ -16,6 +16,57 @@
   },
   "host": "localhost:5000",
   "paths": {
+    "/api/answers/{id}": {
+      "put": {
+        "tags": [
+          "answers"
+        ],
+        "operationId": "answer",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AnswerResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "answers"
+        ],
+        "operationId": "bool"
+      }
+    },
+    "/api/answers/{id}/dislike": {
+      "post": {
+        "tags": [
+          "answers"
+        ],
+        "operationId": "answer"
+      }
+    },
+    "/api/answers/{id}/dislike/undo": {
+      "post": {
+        "tags": [
+          "answers"
+        ],
+        "operationId": "answer"
+      }
+    },
+    "/api/answers/{id}/like": {
+      "post": {
+        "tags": [
+          "answers"
+        ],
+        "operationId": "answer"
+      }
+    },
+    "/api/answers/{id}/like/undo": {
+      "post": {
+        "tags": [
+          "answers"
+        ],
+        "operationId": "answer"
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": [
@@ -113,57 +164,6 @@
             "$ref": "#/responses/AnswerResponse"
           }
         }
-      }
-    },
-    "/api/questions/{id}/answers/{id}": {
-      "put": {
-        "tags": [
-          "questions"
-        ],
-        "operationId": "answer",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/AnswerResponse"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "questions"
-        ],
-        "operationId": "bool"
-      }
-    },
-    "/api/questions/{id}/answers/{id}/dislike": {
-      "post": {
-        "tags": [
-          "questions"
-        ],
-        "operationId": "answer"
-      }
-    },
-    "/api/questions/{id}/answers/{id}/dislike/undo": {
-      "post": {
-        "tags": [
-          "questions"
-        ],
-        "operationId": "answer"
-      }
-    },
-    "/api/questions/{id}/answers/{id}/like": {
-      "post": {
-        "tags": [
-          "questions"
-        ],
-        "operationId": "answer"
-      }
-    },
-    "/api/questions/{id}/answers/{id}/like/undo": {
-      "post": {
-        "tags": [
-          "questions"
-        ],
-        "operationId": "answer"
       }
     },
     "/api/questions/{id}/dislike": {
