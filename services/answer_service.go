@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/domain"
@@ -8,6 +10,7 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/utils"
 )
 
+var ErrorAnswerDeletePermission = errors.New("you do not have permission to delete this answer")
 
 type AnswerService struct {
 	answerRepo *repositories.AnswerRepository
@@ -16,8 +19,6 @@ type AnswerService struct {
 func NewAnswerRepository(ar *repositories.AnswerRepository) *AnswerService {
 	return &AnswerService{ar}
 }
-
-
 
 func (as *AnswerService) Update (
 	answerId uint,
@@ -69,4 +70,45 @@ func (as *AnswerService) Update (
 	return &responses.AnswerResponse{
 		Data: response,
 	}, nil
+}
+
+func (as *AnswerService) Delete(answerId uint, userId uint ) *responses.ErrorResponse {
+	answer, err := as.answerRepo.GetById(answerId)
+
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: err.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	if answer.UserID != userId {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: ErrorAnswerDeletePermission.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	err = as.answerRepo.Delete(answer)
+
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: err.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	return nil
 }

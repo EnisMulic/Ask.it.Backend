@@ -32,3 +32,8 @@ func (ar *AnswerRepository) Update(answer domain.Answer, updatedAnswer domain.An
 
 	return answer, result.Error
 }
+
+func (ar *AnswerRepository) Delete (answer domain.Answer) error {
+	result := ar.db.Delete(&answer)
+	return result.Error
+}

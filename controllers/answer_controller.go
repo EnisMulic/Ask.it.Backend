@@ -100,7 +100,49 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 // swagger:route DELETE /api/answers/{id} answers bool
 //
 func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
-	
+	vars := mux.Vars(r)
+
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	sub, err := utils.ExtractSubFromJwt(r)
+
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	errRes := ac.as.Delete(uint(id), uint(userId))
+
+	if errRes != nil {
+		out, _ := json.Marshal(errRes)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return;
+	}
+
+	rw.WriteHeader(http.StatusNoContent)
 }
 
 // swagger:route POST /api/answers/{id}/like answers answer
