@@ -28,17 +28,18 @@ func NewQuestionService(
 	return &QuestionService{repo, ratingRepo, answerRepo}
 } 
 
-func (qs *QuestionService) Get (search requests.QuestionSearchRequest) responses.QuestionsReponse {
+func (qs *QuestionService) Get (search requests.QuestionSearchRequest) *responses.QuestionsReponse {
 	var filter repositories.QuestionFilter
+	var pagination repositories.PaginationFilter
 
-	if (search != requests.QuestionSearchRequest{}) {
-		filter = repositories.QuestionFilter{
+	if (search.PaginationQuery != nil) {
+		pagination = repositories.PaginationFilter{
 			PageNumber: search.PageNumber,
 			PageSize: search.PageSize,
 		}
 	}
 
-	questions := qs.repo.GetPaged(filter)
+	questions, count := qs.repo.GetPaged(filter, pagination)
 
 	var response []responses.QuestionResponseModel
 	for _, question := range questions {
@@ -46,7 +47,11 @@ func (qs *QuestionService) Get (search requests.QuestionSearchRequest) responses
 		response = append(response, questionResponse)
 	}
 
-	return responses.QuestionsReponse{Data: response}
+	if (search != requests.QuestionSearchRequest{}) {
+		return utils.CreateQuestionPagedResponse(response, count, int64(search.PageNumber), int64(search.PageSize))
+	} else {
+		return utils.CreateQuestionPagedResponse(response, count, 0, 0)
+	}
 }
 
 func (qs *QuestionService) GetById (id uint) (*responses.QuestionResponse, *responses.ErrorResponse) {

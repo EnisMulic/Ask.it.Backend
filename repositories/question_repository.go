@@ -15,31 +15,40 @@ func NewQuestionRepository(db *gorm.DB) *QuestionRepository {
 	return &QuestionRepository{db}
 }
 
-type QuestionFilter struct {
+type PaginationFilter struct {
 	PageNumber int
 	PageSize int
+}
+
+type QuestionFilter struct {
 	UserID uint
 }
 
-func (ur *QuestionRepository) GetPaged (filter QuestionFilter) []domain.Question {
+func (ur *QuestionRepository) GetPaged (filter QuestionFilter, pagination PaginationFilter) ([]domain.Question, int64) {
 	var questions []domain.Question
-	query := ur.db
+	query := ur.db.Model(&domain.Question{})
+
+	var count int64
 
 	if (QuestionFilter{} != filter) {
 		
 		if filter.UserID != 0 {
 			query = query.Where("user_id = ?", filter.UserID)
 		}
+	}
 
-		if filter.PageNumber > 0 && filter.PageSize > 0 {
-			query = query.Limit(filter.PageSize).Offset((filter.PageNumber - 1) * filter.PageSize)
+	query.Count(&count)
+
+	if (PaginationFilter{} != pagination) {
+		if pagination.PageNumber > 0 && pagination.PageSize > 0 {
+			query = query.Limit(pagination.PageSize).Offset((pagination.PageNumber - 1) * pagination.PageSize)
 		}
 	}
 	
 
 	query.Joins("User").Find(&questions)
-
-	return questions
+	
+	return questions, count
 }
 
 func (ur *QuestionRepository) GetById (id uint) (domain.Question, error) {

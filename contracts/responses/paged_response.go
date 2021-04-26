@@ -3,15 +3,15 @@ package responses
 // swagger:response PagedResponse
 type PagedResponse struct {
 	// in: body
-	PageNumber   int
+	PageNumber   int64
 	// in: body
-	PageSize     int
+	PageSize     int64
 	// in: body
-	NextPage     int
+	NextPage     *int64
 	// in: body
-	PreviousPage int
+	PreviousPage *int64
 	// in: body
-	FirstPage    int
+	FirstPage    int64
 	// in: body
-	LastPage     int
+	LastPage     int64
 }

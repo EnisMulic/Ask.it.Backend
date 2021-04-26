@@ -23,7 +23,17 @@ func NewUserService(userRepo *repositories.UserRepository, questionRepo *reposit
 } 
 
 func (us *UserService) Get (search requests.UserSearchRequest) responses.UsersResponse {
-	users := us.userRepo.GetPaged(search)
+	var filter repositories.UserFilter
+	var pagination repositories.PaginationFilter
+
+	if (search.PaginationQuery != nil) {
+		pagination = repositories.PaginationFilter{
+			PageNumber: search.PageNumber,
+			PageSize: search.PageSize,
+		}
+	}
+
+	users, count := us.userRepo.GetPaged(filter, pagination)
 
 	var response []responses.UserResponseModel
 	for _, user := range users {
@@ -32,7 +42,11 @@ func (us *UserService) Get (search requests.UserSearchRequest) responses.UsersRe
 		response = append(response, userResponse)
 	}
 
-	return responses.UsersResponse{Data: response}
+	if (search != requests.UserSearchRequest{}) {
+		return utils.CreateUserPagedResponse(response, count, int64(search.PageNumber), int64(search.PageSize))
+	} else {
+		return utils.CreateUserPagedResponse(response, count, 0, 0)
+	}
 }
 
 func (us *UserService) GetById (id uint) (*responses.UserResponse, *responses.ErrorResponse) {
@@ -159,18 +173,20 @@ func (us *UserService) GetQuestions (userId uint, search requests.QuestionSearch
 		return nil, errors
 	}
 
-	var filter repositories.QuestionFilter
+	filter := repositories.QuestionFilter{
+		UserID: userId,
+	}
 
-	if (search != requests.QuestionSearchRequest{}) {
-		filter = repositories.QuestionFilter{
+	var pagination repositories.PaginationFilter
+
+	if (search.PaginationQuery != nil) {
+		pagination = repositories.PaginationFilter{
 			PageNumber: search.PageNumber,
 			PageSize: search.PageSize,
 		}
 	}
 
-	filter.UserID = userId
-
-	questions := us.questionRepo.GetPaged(filter)
+	questions, count := us.questionRepo.GetPaged(filter, pagination)
 
 	var response []responses.QuestionResponseModel
 	for _, question := range questions {
@@ -178,5 +194,9 @@ func (us *UserService) GetQuestions (userId uint, search requests.QuestionSearch
 		response = append(response, questionResponse)
 	}
 
-	return &responses.QuestionsReponse{Data: response}, nil
+	if (search != requests.QuestionSearchRequest{}) {
+		return utils.CreateQuestionPagedResponse(response, count, int64(search.PageNumber), int64(search.PageSize)), nil
+	} else {
+		return utils.CreateQuestionPagedResponse(response, count, 0, 0), nil
+	}
 }

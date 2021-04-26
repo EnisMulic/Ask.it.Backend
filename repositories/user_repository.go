@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/domain"
 	"gorm.io/gorm"
 )
@@ -15,16 +14,29 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db}
 }
 
-func (ur *UserRepository) GetPaged (search requests.UserSearchRequest) []domain.User {
+type UserFilter struct {
+
+}
+
+func (ur *UserRepository) GetPaged (filter UserFilter, pagination PaginationFilter) ([]domain.User, int64) {
 	var users []domain.User
-	query := ur.db
-	if (requests.UserSearchRequest{} != search) && search.PageNumber > 0 && search.PageSize > 0 {
-		query = query.Limit(search.PageSize).Offset((search.PageNumber - 1) * search.PageSize)
+	query := ur.db.Model(&domain.User{})
+
+	var count int64
+
+	query.Count(&count)
+
+	if (PaginationFilter{} != pagination) {
+		
+		if pagination.PageNumber > 0 && pagination.PageSize > 0 {
+			query = query.Limit(pagination.PageSize).Offset((pagination.PageNumber - 1) * pagination.PageSize)
+		}
 	}
+	
 
 	query.Find(&users)
 
-	return users
+	return users, count
 }
 
 func (ur *UserRepository) GetById (id uint) domain.User {
