@@ -15,10 +15,15 @@ var ErrorQuestionNotFound error = errors.New("question not found")
 type QuestionService struct {
 	repo *repositories.QuestionRepository
 	ratingRepo *repositories.UserQuestionRatingRepository
+	answerRepo *repositories.AnswerRepository
 }
 
-func NewQuestionService(repo *repositories.QuestionRepository, ratingRepo *repositories.UserQuestionRatingRepository) *QuestionService {
-	return &QuestionService{repo, ratingRepo}
+func NewQuestionService(
+	repo *repositories.QuestionRepository, 
+	ratingRepo *repositories.UserQuestionRatingRepository,
+	answerRepo *repositories.AnswerRepository,
+) *QuestionService {
+	return &QuestionService{repo, ratingRepo, answerRepo}
 } 
 
 func (qs *QuestionService) Get (search requests.QuestionSearchRequest) responses.QuestionsReponse {
@@ -254,4 +259,29 @@ func (qs *QuestionService) DislikeUndo (questionId uint, userId uint) *responses
 	}
 
 	return nil
+}
+
+func (qs *QuestionService) CreateAnswer (questionId uint, userId uint, req requests.AnswerInsertRequest) (*responses.AnswerResponse, *responses.ErrorResponse) {
+	answer := domain.Answer{
+		QuestionID: questionId,
+		UserID: userId,
+		Content: req.Content,
+	}
+
+	newAnswer, err := qs.answerRepo.Create(answer)
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: err.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
+	}
+
+	newAnswer, _ = qs.answerRepo.GetById(newAnswer.ID)
+	response := utils.ConvertToAnswerResponseModel(newAnswer)
+	
+	return &responses.AnswerResponse{Data: response}, nil
 }

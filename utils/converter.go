@@ -24,3 +24,25 @@ func ConvertToQuestionResponseModel(question domain.Question) responses.Question
 		User: ConvertToUserResponseModel(question.User),
 	}
 }
+
+func ConvertToAnswerResponseModel(answer domain.Answer) responses.AnswerResponseModel {
+	return responses.AnswerResponseModel{
+		ID: answer.ID,
+		User: ConvertToUserResponseModel(answer.User),
+		Content: answer.Content,
+		CreatedAt: answer.CreatedAt,
+		UpdatedAt: answer.UpdatedAt,
+		Likes: answer.Likes,
+		Dislikes: answer.Dislikes,
+	}
+}
+
+func ConvertToAnswerResponseModels(answers []domain.Answer) []responses.AnswerResponseModel {
+	var list []responses.AnswerResponseModel
+	for _, answer := range answers {
+		answerModel := ConvertToAnswerResponseModel(answer)
+		list = append(list, answerModel)
+	}
+	
+	return list
+}

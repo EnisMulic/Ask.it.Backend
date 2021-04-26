@@ -385,7 +385,74 @@ func (qc *QuestionController) GetAnswers (rw http.ResponseWriter, r *http.Reques
 // responses:
 //	204: AnswerResponse
 func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	sub, err := utils.ExtractSubFromJwt(r)
+	
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	var req requests.AnswerInsertRequest
+
+	decoder := json.NewDecoder(r.Body)
+	
+	err = decoder.Decode(&req)
+    if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.UnableToParseJSONBody,
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+    } 
+
+	question, resErr := qc.qs.CreateAnswer(uint(id), uint(userId), req)
+	if resErr != nil {
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(rw).Encode(question)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+	}
+	rw.WriteHeader(http.StatusCreated)
 }
 
 // swagger:route PUT /api/questions/{id}/answers/{id} questions answer

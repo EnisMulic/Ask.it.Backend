@@ -38,10 +38,11 @@ func main() {
 	userRepo := repositories.NewUserRepository(db)
 	questionRepo := repositories.NewQuestionRepository(db)
 	questionRatingRepo := repositories.NewUserQuestionRatingRepository(db)
+	answerRepo := repositories.NewAnswerRepository(db)
 	
 	authSevice := services.NewAuthService(userRepo)
 	userService := services.NewUserService(userRepo, questionRepo)
-	questionService := services.NewQuestionService(questionRepo, questionRatingRepo)
+	questionService := services.NewQuestionService(questionRepo, questionRatingRepo, answerRepo)
 
 	ac := controllers.NewAuthController(logger, authSevice)
 	uc := controllers.NewUserController(logger, userService)
@@ -74,6 +75,7 @@ func main() {
 	questionsPostRouter := r.Methods(http.MethodPost).Subrouter()
 
 	questionsPostRouter.HandleFunc(constants.CreateQuestionRoute, qc.Create)
+	questionsPostRouter.HandleFunc(constants.CreateQuestionAnswerRoute, qc.CreateAnswer)
 
 	questionsPostRouter.HandleFunc(constants.LikeQuestionRoute, qc.Like)
 	questionsPostRouter.HandleFunc(constants.LikeQuestionUndoRoute, qc.LikeUndo)
