@@ -14,10 +14,11 @@ var ErrorAnswerDeletePermission = errors.New("you do not have permission to dele
 
 type AnswerService struct {
 	answerRepo *repositories.AnswerRepository
+	ratingRepo *repositories.UserAnswerRatingRepository
 }
 
-func NewAnswerRepository(ar *repositories.AnswerRepository) *AnswerService {
-	return &AnswerService{ar}
+func NewAnswerRepository(ar *repositories.AnswerRepository, arr *repositories.UserAnswerRatingRepository) *AnswerService {
+	return &AnswerService{ar, arr}
 }
 
 func (as *AnswerService) Update (
@@ -108,6 +109,159 @@ func (as *AnswerService) Delete(answerId uint, userId uint ) *responses.ErrorRes
 		errors := responses.NewErrorResponse(err)	
 
 		return errors
+	}
+
+	return nil
+}
+
+func (as *AnswerService) Like (answerId uint, userId uint) *responses.ErrorResponse {
+	rating, err := as.ratingRepo.Get(answerId, userId)
+	
+	if err != nil {
+		_, err := as.ratingRepo.Create(domain.UserAnswerRating{
+			UserID: userId,
+			AnswerID: answerId,
+			IsLiked: true,
+		})
+
+		if err != nil {
+			resErr := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(resErr)	
+
+			return errors
+		}
+
+		return nil
+	}
+
+	if !rating.IsLiked {
+		_, err = as.ratingRepo.Update(rating, domain.UserAnswerRating{
+			IsLiked: true,
+		})
+
+		if err != nil {
+			resErr := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(resErr)	
+
+			return errors
+		}
+	}
+
+	return nil
+}
+
+func (as *AnswerService) LikeUndo (answerId uint, userId uint) *responses.ErrorResponse {
+	rating, err := as.ratingRepo.Get(answerId, userId)
+
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: "An error occurred",
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	if rating.IsLiked {
+		err := as.ratingRepo.Delete(rating)
+		
+		if err != nil {
+			err := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(err)	
+
+			return errors
+		}
+	}
+
+	return nil
+}
+
+func (as *AnswerService) Dislike (answerId uint, userId uint) *responses.ErrorResponse {
+	rating, err := as.ratingRepo.Get(answerId, userId)
+	
+	if err != nil {
+		_, err := as.ratingRepo.Create(domain.UserAnswerRating{
+			UserID: userId,
+			AnswerID: answerId,
+			IsLiked: false,
+		})
+
+		if err != nil {
+			resErr := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(resErr)	
+
+			return errors
+		}
+
+		return nil
+	}
+
+	if rating.IsLiked {
+		_, err = as.ratingRepo.Update(rating, domain.UserAnswerRating{
+			IsLiked: false,
+		})
+
+		if err != nil {
+			resErr := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(resErr)	
+
+			return errors
+		}
+	}
+
+	return nil
+}
+
+func (as *AnswerService) DislikeUndo (answerId uint, userId uint) *responses.ErrorResponse {
+	rating, err := as.ratingRepo.Get(answerId, userId)
+
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: "An error occurred",
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return errors
+	}
+
+	if !rating.IsLiked {
+		
+		err := as.ratingRepo.Delete(rating)
+
+		if err != nil {
+			err := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(err)	
+
+			return errors
+		}
 	}
 
 	return nil

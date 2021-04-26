@@ -148,24 +148,180 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 // swagger:route POST /api/answers/{id}/like answers answer
 //
 func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+	
+	sub, err := utils.ExtractSubFromJwt(r)
+	
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	resErr := ac.as.Like(uint(id), uint(userId))
+	if resErr != nil {
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
 }
 
 
 // swagger:route POST /api/answers/{id}/like/undo answers answer
 //
 func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+	
+	sub, err := utils.ExtractSubFromJwt(r)
+	
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	resErr := ac.as.LikeUndo(uint(id), uint(userId))
+	if resErr != nil {
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
 }
 
 // swagger:route POST /api/answers/{id}/dislike answers answer
 //
 func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
 	
+	sub, err := utils.ExtractSubFromJwt(r)
+	
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	resErr := ac.as.Dislike(uint(id), uint(userId))
+	if resErr != nil {
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
 }
 
 // swagger:route POST /api/answers/{id}/dislike/undo answers answer
 //
 func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
 	
+	sub, err := utils.ExtractSubFromJwt(r)
+	
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	resErr := ac.as.DislikeUndo(uint(id), uint(userId))
+	if resErr != nil {
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
 }
