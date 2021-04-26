@@ -9,46 +9,70 @@ type UserQuestionRating struct {
 }
 
 func (uqr *UserQuestionRating) AfterCreate(tx *gorm.DB) (err error) {
+	var like int
+	var dislike int
+
+	if uqr.IsLiked {
+		like = 1
+		dislike = 0
+	} else {
+		like = 0
+		dislike = 1
+	}
+
+	var question Question
+	tx.Find(&question, uqr.QuestionID)
+	
+	result := tx.Model(&question).Where("id = ?", uqr.QuestionID).Updates(Question{
+		Likes:    question.Likes + like,
+		Dislikes: question.Dislikes + dislike,
+	})
+
+	return result.Error
+}
+
+func (uqr *UserQuestionRating) AfterUpdate(tx *gorm.DB) (err error) {
+	var like int
+	var dislike int
+
+	if uqr.IsLiked {
+		like = 1
+		dislike = -1
+	} else {
+		like = -1
+		dislike = 1
+	}
+
 	var question Question
 	tx.Find(&question, uqr.QuestionID)
 
-	var likeIncrement int
-	var dislikeIncrement int
-
-	if uqr.IsLiked {
-		likeIncrement = 1
-		dislikeIncrement = 0
-	} else {
-		likeIncrement = 0
-		dislikeIncrement = 1
-	}
-
-	result := tx.Model(&question).Updates(Question{
-		Likes:    question.Likes + likeIncrement,
-		Dislikes: question.Dislikes + dislikeIncrement,
+	result := tx.Model(&question).Where("id = ?", uqr.QuestionID).Updates(Question{
+		Likes:    question.Likes + like,
+		Dislikes: question.Dislikes + dislike,
 	})
 
 	return result.Error
 }
 
 func (uqr *UserQuestionRating) BeforeDelete(tx *gorm.DB) (err error) {
-	var question Question
-	tx.Find(&question, uqr.QuestionID)
 	
-	var likeDecrement int
-	var dislikeDecrement int
+	var like int
+	var dislike int
 
 	if uqr.IsLiked {
-		likeDecrement = 1
-		dislikeDecrement = 0
+		like = 1
+		dislike = 0
 	} else {
-		likeDecrement = 0
-		dislikeDecrement = 1
+		like = 0
+		dislike = 1
 	}
 
-	result := tx.Model(&question).Updates(Question{
-		Likes:    question.Likes - likeDecrement,
-		Dislikes: question.Dislikes - dislikeDecrement,
+	var question Question
+	tx.Find(&question, uqr.QuestionID)
+
+	result := tx.Model(&question).Where("id = ?", uqr.QuestionID).Updates(Question{
+		Likes:    question.Likes - like,
+		Dislikes: question.Dislikes - dislike,
 	})
 
 	return result.Error

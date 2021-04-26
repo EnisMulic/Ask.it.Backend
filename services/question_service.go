@@ -14,10 +14,11 @@ var ErrorQuestionNotFound error = errors.New("question not found")
 
 type QuestionService struct {
 	repo *repositories.QuestionRepository
+	ratingRepo *repositories.UserQuestionRatingRepository
 }
 
-func NewQuestionService(repo *repositories.QuestionRepository) *QuestionService {
-	return &QuestionService{repo}
+func NewQuestionService(repo *repositories.QuestionRepository, ratingRepo *repositories.UserQuestionRatingRepository) *QuestionService {
+	return &QuestionService{repo, ratingRepo}
 } 
 
 func (qs *QuestionService) Get (search requests.QuestionSearchRequest) responses.QuestionsReponse {
@@ -103,8 +104,52 @@ func (qs *QuestionService) Delete (questionId uint, userId uint) *responses.Erro
 }
 
 func (qs *QuestionService) Like (questionId uint, userId uint) *responses.ErrorResponse {
-	err := qs.repo.Like(questionId, userId)
+	rating, err := qs.ratingRepo.Get(questionId, userId)
 	
+	if err != nil {
+		_, err := qs.ratingRepo.Create(domain.UserQuestionRating{
+			UserID: userId,
+			QuestionID: questionId,
+			IsLiked: true,
+		})
+
+		if err != nil {
+			resErr := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(resErr)	
+
+			return errors
+		}
+
+		return nil
+	}
+
+	if !rating.IsLiked {
+		_, err = qs.ratingRepo.Update(rating, domain.UserQuestionRating{
+			IsLiked: true,
+		})
+
+		if err != nil {
+			resErr := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(resErr)	
+
+			return errors
+		}
+	}
+
+	return nil
+}
+
+func (qs *QuestionService) LikeUndo (questionId uint, userId uint) *responses.ErrorResponse {
+	rating, err := qs.ratingRepo.Get(questionId, userId)
+
 	if err != nil {
 		err := responses.ErrorResponseModel{
 			FieldName: "",
@@ -116,12 +161,71 @@ func (qs *QuestionService) Like (questionId uint, userId uint) *responses.ErrorR
 		return errors
 	}
 
+	if rating.IsLiked {
+		err := qs.ratingRepo.Delete(rating)
+		
+		if err != nil {
+			err := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(err)	
+
+			return errors
+		}
+	}
+
 	return nil
 }
 
-func (qs *QuestionService) LikeUndo (questionId uint, userId uint) *responses.ErrorResponse {
-	err := qs.repo.LikeUndo(questionId, userId)
+func (qs *QuestionService) Dislike (questionId uint, userId uint) *responses.ErrorResponse {
+	rating, err := qs.ratingRepo.Get(questionId, userId)
 	
+	if err != nil {
+		_, err := qs.ratingRepo.Create(domain.UserQuestionRating{
+			UserID: userId,
+			QuestionID: questionId,
+			IsLiked: false,
+		})
+
+		if err != nil {
+			resErr := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(resErr)	
+
+			return errors
+		}
+
+		return nil
+	}
+
+	if rating.IsLiked {
+		_, err = qs.ratingRepo.Update(rating, domain.UserQuestionRating{
+			IsLiked: false,
+		})
+
+		if err != nil {
+			resErr := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(resErr)	
+
+			return errors
+		}
+	}
+
+	return nil
+}
+
+func (qs *QuestionService) DislikeUndo (questionId uint, userId uint) *responses.ErrorResponse {
+	rating, err := qs.ratingRepo.Get(questionId, userId)
+
 	if err != nil {
 		err := responses.ErrorResponseModel{
 			FieldName: "",
@@ -131,6 +235,22 @@ func (qs *QuestionService) LikeUndo (questionId uint, userId uint) *responses.Er
 		errors := responses.NewErrorResponse(err)	
 
 		return errors
+	}
+
+	if !rating.IsLiked {
+		
+		err := qs.ratingRepo.Delete(rating)
+
+		if err != nil {
+			err := responses.ErrorResponseModel{
+				FieldName: "",
+				Message: "An error occurred",
+			}
+
+			errors := responses.NewErrorResponse(err)	
+
+			return errors
+		}
 	}
 
 	return nil
