@@ -26,7 +26,7 @@ const (
 	DislikeQuestionUndoRoute       = QuestionsBaseRoute + "/{id}/dislike/undo"
 	GetQuestionAnswersRoute        = QuestionsBaseRoute + "/{id}/answers"
 	CreateQuestionAnswerRoute      = QuestionsBaseRoute + "/{id}/answers"
-	EditQuestionAnswerRoute        = QuestionsBaseRoute + "/{id}/answers/{answer_id}"
+	UpdateQuestionAnswerRoute      = QuestionsBaseRoute + "/{id}/answers/{answer_id}"
 	DeleteQuestionAnswerRoute      = QuestionsBaseRoute + "/{id}/answers/{answer_id}"
 	LikeQuestionAnswerRoute        = QuestionsBaseRoute + "/{id}/answers/{answer_id}/like"
 	LikeQuestionAnswerUndoRoute    = QuestionsBaseRoute + "/{id}/answers/{answer_id}/like/undo"

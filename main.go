@@ -90,7 +90,7 @@ func main() {
 	questionsPostRouter.HandleFunc(constants.DislikeQuestionAnswerUndoRoute, qc.DislikeAnswerUndo)
 
 	questionsPutRouter := r.Methods(http.MethodPut).Subrouter()
-	questionsPutRouter.HandleFunc(constants.EditQuestionAnswerRoute, qc.EditAnswer)
+	questionsPutRouter.HandleFunc(constants.UpdateQuestionAnswerRoute, qc.UpdateAnswer)
 
 	questionsDeleteRouter := r.Methods(http.MethodDelete).Subrouter()
 	questionsDeleteRouter.HandleFunc(constants.DeleteQuestionRoute, qc.Delete)

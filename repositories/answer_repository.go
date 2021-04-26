@@ -24,3 +24,11 @@ func (ar *AnswerRepository) Create(answer domain.Answer) (domain.Answer, error) 
 	result := ar.db.Create(&answer)
 	return answer, result.Error
 }
+
+func (ar *AnswerRepository) Update(answer domain.Answer, updatedAnswer domain.Answer) (domain.Answer, error) {
+	result := ar.db.Model(&answer).Updates(domain.Answer{
+		Content: updatedAnswer.Content,
+	})
+
+	return answer, result.Error
+}

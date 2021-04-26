@@ -455,12 +455,91 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 	rw.WriteHeader(http.StatusCreated)
 }
 
-// swagger:route PUT /api/questions/{id}/answers/{id} questions answer
+// swagger:route PUT /api/questions/{id}/answers/{answer_id} questions answer
 //
 // responses:
 //	200: AnswerResponse
-func (qc *QuestionController) EditAnswer (rw http.ResponseWriter, r *http.Request) {
+func (qc *QuestionController) UpdateAnswer (rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	answerId, err := strconv.ParseUint(vars["answer_id"], 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert answer_id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	sub, err := utils.ExtractSubFromJwt(r)
+
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+
+	userId, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	var req requests.AnswerUpdateRequest
+
+	decoder := json.NewDecoder(r.Body)
+	
+	err = decoder.Decode(&req)
+    if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.UnableToParseJSONBody,
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+    } 
+
+	user, errRes := qc.qs.UpdateAnswer(uint(id), uint(answerId), uint(userId), req)
+
+	if errRes != nil {
+		out, _ := json.Marshal(errRes)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return;
+	}
+
+	err = json.NewEncoder(rw).Encode(user)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+	}
 }
 
 // swagger:route DELETE /api/questions/{id}/answers/{id} questions bool

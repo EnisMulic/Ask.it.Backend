@@ -11,6 +11,8 @@ import (
 )
 
 var ErrorQuestionNotFound error = errors.New("question not found")
+var ErrorAnswerNotFound error = errors.New("answer not found")
+var ErrorAnswerEditPermission error = errors.New("you do not have permission to edit this answer")
 
 type QuestionService struct {
 	repo *repositories.QuestionRepository
@@ -284,4 +286,57 @@ func (qs *QuestionService) CreateAnswer (questionId uint, userId uint, req reque
 	response := utils.ConvertToAnswerResponseModel(newAnswer)
 	
 	return &responses.AnswerResponse{Data: response}, nil
+}
+
+func (qs *QuestionService) UpdateAnswer (
+	questionId uint, 
+	answerId uint,
+	userId uint,
+	req requests.AnswerUpdateRequest,
+) (*responses.AnswerResponse, *responses.ErrorResponse) {
+	answer, _ := qs.answerRepo.GetById(answerId)
+
+	if answer.ID == 0 {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: ErrorAnswerNotFound.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
+	}
+
+	if answer.QuestionID != questionId || answer.UserID != userId {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: ErrorAnswerEditPermission.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
+	}
+
+	updatedAnswer := domain.Answer{
+		Content: req.Content,
+	}
+
+	answer, err := qs.answerRepo.Update(answer, updatedAnswer)
+
+	if err != nil {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: err.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
+	}
+
+	response := utils.ConvertToAnswerResponseModel(answer)
+	return &responses.AnswerResponse{
+		Data: response,
+	}, nil
 }
