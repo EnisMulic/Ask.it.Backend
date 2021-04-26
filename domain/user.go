@@ -11,6 +11,7 @@ type User struct {
 	PasswordHash  string
 	Questions []Question
 	Answers []Answer
+	AnswerCount int
 	QuestionRatings []Question `gorm:"many2many:user_question_ratings;"`
 	AnswerRatings []Answer `gorm:"many2many:user_answer_ratings;"`
 }

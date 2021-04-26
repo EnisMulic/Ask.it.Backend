@@ -11,6 +11,7 @@ func ConvertToUserResponseModel(user domain.User) responses.UserResponseModel {
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
+		AnswerCount: user.AnswerCount,
 	}
 }
 

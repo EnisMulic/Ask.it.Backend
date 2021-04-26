@@ -451,6 +451,7 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 		out, _ := json.Marshal(errors)
 
 		http.Error(rw, string(out), http.StatusInternalServerError)
+		return
 	}
 	rw.WriteHeader(http.StatusCreated)
 }

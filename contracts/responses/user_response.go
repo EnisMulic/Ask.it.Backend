@@ -1,10 +1,11 @@
 package responses
 
 type UserResponseModel struct {
-	ID        uint
-	FirstName string
-	LastName  string
-	Email     string
+	ID          uint
+	FirstName   string
+	LastName    string
+	Email       string
+	AnswerCount int
 }
 
 // swagger:response UserResponse
