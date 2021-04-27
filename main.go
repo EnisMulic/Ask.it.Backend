@@ -13,6 +13,7 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/services"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -106,10 +107,18 @@ func main() {
 	answerDeleteRouter.HandleFunc(constants.DeleteAnswerRoute, answc.Delete)
 
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swaggerui/"))))
+	
+	cors := cors.New(cors.Options{
+		AllowedOrigins: []string{os.Getenv("CLIENT_APP")},
+		AllowCredentials: true,
+		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Content-Type"},
+		Debug: true,
+	})
 
 	addr := os.Getenv("API_ADDRESS")
 	srv := &http.Server {
-		Handler: r,
+		Handler: cors.Handler(r),
 		Addr: addr,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout: 15 * time.Second,
