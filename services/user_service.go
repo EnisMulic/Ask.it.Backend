@@ -68,6 +68,24 @@ func (us *UserService) GetById (id uint) (*responses.UserResponse, *responses.Er
 	return &responses.UserResponse{Data: response}, nil
 }
 
+func (us *UserService) GetPersonalInfo (id uint) (*responses.UserPersonalInfoResponse, *responses.ErrorResponse) {
+	user := us.userRepo.GetPersonalInfo(id)
+
+	if user.ID == 0 {
+		err := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: ErrorUserNotFound.Error(),
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
+	}
+	response := utils.ConvertToUserPersonalInfoResponseModel(user)
+
+	return &responses.UserPersonalInfoResponse{Data: response}, nil
+}
+
 func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*responses.UserResponse, *responses.ErrorResponse){
 	user := us.userRepo.GetById(id)
 

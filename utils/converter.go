@@ -15,6 +15,46 @@ func ConvertToUserResponseModel(user domain.User) responses.UserResponseModel {
 	}
 }
 
+func ConvertToUserPersonalInfoResponseModel(user domain.User) responses.UserPersonalInfoResponseModel {
+	return responses.UserPersonalInfoResponseModel{
+		ID:        user.ID,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		AnswerCount: user.AnswerCount,
+		QuestionRatings: convertToUserQuestionRatingsModel(user.UserQuestionRatings),
+		AnswerRatings: convertToUserAnswerRatingsModel(user.UserAnswerRatings),
+	}
+}
+
+func convertToUserQuestionRatingsModel(ratings []domain.UserQuestionRating) []responses.UserQuestionRatingModel {
+	var ratingModels []responses.UserQuestionRatingModel
+	for _, rating := range ratings {
+		ratingModel := responses.UserQuestionRatingModel{
+			QuestionID: rating.QuestionID,
+			IsLiked: rating.IsLiked,
+		}
+
+		ratingModels = append(ratingModels, ratingModel)
+	}
+
+	return ratingModels
+}
+
+func convertToUserAnswerRatingsModel(ratings []domain.UserAnswerRating) []responses.UserAnswerRatingModel {
+	var ratingModels []responses.UserAnswerRatingModel
+	for _, rating := range ratings {
+		ratingModel := responses.UserAnswerRatingModel{
+			AnswerID: rating.AnswerID,
+			IsLiked: rating.IsLiked,
+		}
+
+		ratingModels = append(ratingModels, ratingModel)
+	}
+
+	return ratingModels
+}
+
 func ConvertToQuestionResponseModel(question domain.Question) responses.QuestionResponseModel {
 	return responses.QuestionResponseModel{
 		ID: question.ID,

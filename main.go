@@ -54,6 +54,9 @@ func main() {
 
 	r := mux.NewRouter()
 
+	userGetRouter := r.Methods(http.MethodGet).Subrouter()
+	userGetRouter.HandleFunc(constants.GetMeRoute, uc.GetMe)
+
 	// auth routers
 	authPostRouter := r.Methods(http.MethodPost).Subrouter()
 	authPostRouter.HandleFunc(constants.LoginRoute, ac.Login)
@@ -63,8 +66,8 @@ func main() {
 	usersGetRouter := r.Methods(http.MethodGet).Subrouter()
 	usersGetRouter.HandleFunc(constants.GetUsersRoute, uc.Get)
 	usersGetRouter.HandleFunc(constants.GetUserByIdRoute, uc.GetById)
-	usersGetRouter.HandleFunc(constants.GetMeRoute, uc.GetMe)
 	usersGetRouter.HandleFunc(constants.GetUsersQuestionsRoute, uc.GetQuestions)
+	
 
 	usersPostRoutes := r.Methods(http.MethodPost).Subrouter()
 	usersPostRoutes.HandleFunc(constants.ChangeUserPasswordRoute, uc.ChangePassword)
@@ -74,7 +77,6 @@ func main() {
 	questionsGetRouter := r.Methods(http.MethodGet).Subrouter()
 	questionsGetRouter.HandleFunc(constants.GetQuestionsRoute, qc.Get)
 	questionsGetRouter.HandleFunc(constants.GetQuestionByIdRoute, qc.GetById)
-	questionsGetRouter.HandleFunc(constants.GetQuestionAnswersRoute, qc.GetAnswers)
 	
 	questionsPostRouter := r.Methods(http.MethodPost).Subrouter()
 
@@ -113,7 +115,6 @@ func main() {
 		AllowCredentials: true,
 		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type"},
-		Debug: true,
 	})
 
 	addr := os.Getenv("API_ADDRESS")

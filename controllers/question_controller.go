@@ -372,14 +372,6 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 	}
 }
 
-// swagger:route GET /api/questions/{id}/answers questions answers
-//
-// responses:
-//	200: AnswersResponse
-func (qc *QuestionController) GetAnswers (rw http.ResponseWriter, r *http.Request) {
-
-}
-
 // swagger:route POST /api/questions/{id}/answers questions answer
 //
 // responses:

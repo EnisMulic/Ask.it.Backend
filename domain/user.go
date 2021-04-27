@@ -14,4 +14,6 @@ type User struct {
 	AnswerCount int
 	QuestionRatings []Question `gorm:"many2many:user_question_ratings;"`
 	AnswerRatings []Answer `gorm:"many2many:user_answer_ratings;"`
+	UserQuestionRatings []UserQuestionRating `gorm:"->"`
+	UserAnswerRatings []UserAnswerRating `gorm:"->"`
 }

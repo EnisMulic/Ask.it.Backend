@@ -1,7 +1,8 @@
 package constants
 
 const (
-	ApiRoot = "/api"
+	ApiRoot    = "/api"
+	GetMeRoute = ApiRoot + "/me"
 
 	AuthBaseRoute = ApiRoot + "/auth"
 	LoginRoute    = AuthBaseRoute + "/login"
@@ -10,7 +11,6 @@ const (
 	UsersBaseRoute          = ApiRoot + "/users"
 	GetUsersRoute           = UsersBaseRoute
 	GetUserByIdRoute        = UsersBaseRoute + "/{id}"
-	GetMeRoute              = UsersBaseRoute + "/me"
 	ChangeUserPasswordRoute = UsersBaseRoute + "/change-password"
 	UpdateUserRoute         = UsersBaseRoute
 	GetUsersQuestionsRoute  = UsersBaseRoute + "/{id}/questions"
@@ -24,7 +24,6 @@ const (
 	LikeQuestionUndoRoute     = QuestionsBaseRoute + "/{id}/like/undo"
 	DislikeQuestionRoute      = QuestionsBaseRoute + "/{id}/dislike"
 	DislikeQuestionUndoRoute  = QuestionsBaseRoute + "/{id}/dislike/undo"
-	GetQuestionAnswersRoute   = QuestionsBaseRoute + "/{id}/answers"
 	CreateQuestionAnswerRoute = QuestionsBaseRoute + "/{id}/answers"
 
 	AnswerBaseRoute        = ApiRoot + "/answers"

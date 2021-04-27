@@ -45,6 +45,12 @@ func (ur *UserRepository) GetById (id uint) domain.User {
 	return user
 }
 
+func (ur *UserRepository) GetPersonalInfo(id uint) domain.User {
+	var user domain.User
+	ur.db.Preload("UserQuestionRatings").Preload("UserAnswerRatings").First(&user, id)
+	return user
+}
+
 func (ur *UserRepository) GetByEmail (email string) (domain.User, error) {
 	var user domain.User
 

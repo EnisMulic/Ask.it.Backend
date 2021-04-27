@@ -99,6 +99,20 @@
         }
       }
     },
+    "/api/me": {
+      "get": {
+        "description": "Returns information of the user that called the route",
+        "tags": [
+          "users"
+        ],
+        "operationId": "user",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserResponse"
+          }
+        }
+      }
+    },
     "/api/questions": {
       "get": {
         "tags": [
@@ -143,17 +157,6 @@
       }
     },
     "/api/questions/{id}/answers": {
-      "get": {
-        "tags": [
-          "questions"
-        ],
-        "operationId": "answers",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/AnswersResponse"
-          }
-        }
-      },
       "post": {
         "tags": [
           "questions"
@@ -240,20 +243,6 @@
           "users"
         ],
         "operationId": "bool"
-      }
-    },
-    "/api/users/me": {
-      "get": {
-        "description": "Returns information of the user that called the route",
-        "tags": [
-          "users"
-        ],
-        "operationId": "user",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/UserResponse"
-          }
-        }
       }
     },
     "/api/users/{id}": {
@@ -390,6 +379,10 @@
     "UserResponseModel": {
       "type": "object",
       "properties": {
+        "AnswerCount": {
+          "type": "integer",
+          "format": "int64"
+        },
         "Email": {
           "type": "string"
         },

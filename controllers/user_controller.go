@@ -99,13 +99,49 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /api/users/me users user
+// swagger:route GET /api/me users user
 // Returns information of the user that called the route
 //
 // responses:
 //	200: UserResponse
 func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
+	sub, err := utils.ExtractSubFromJwt(r)
 
+	if err != nil {
+		http.Error(rw, "", http.StatusBadRequest)
+		return;
+	}
+	
+	id, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: "Unable to convert id",
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
+		return
+	}
+
+	user, errRes := uc.us.GetPersonalInfo(uint(id))
+
+	if errRes != nil {
+		out, _ := json.Marshal(errRes)
+		http.Error(rw, string(out), http.StatusNotFound)
+		return
+	}
+
+	err = json.NewEncoder(rw).Encode(user)
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+	}
 }
 
 // swagger:route POST /api/users/change-password users bool
