@@ -33,7 +33,39 @@ func (us *UserService) Get (search requests.UserSearchRequest) responses.UsersRe
 		}
 	}
 
-	users, count := us.userRepo.GetPaged(filter, pagination)
+	users, count := us.userRepo.GetPaged(filter, []repositories.SortFilter{}, pagination)
+
+	var response []responses.UserResponseModel
+	for _, user := range users {
+		userResponse := utils.ConvertToUserResponseModel(user)
+
+		response = append(response, userResponse)
+	}
+
+	if (search != requests.UserSearchRequest{}) {
+		return utils.CreateUserPagedResponse(response, count, int64(search.PageNumber), int64(search.PageSize))
+	} else {
+		return utils.CreateUserPagedResponse(response, count, 0, 0)
+	}
+}
+
+func (us *UserService) GetTop (search requests.UserSearchRequest) responses.UsersResponse {
+	sort := repositories.SortFilter{
+		Column: "answer_count",
+		Order: "desc",
+	}
+
+	var filter repositories.UserFilter
+	var pagination repositories.PaginationFilter
+
+	if (search.PaginationQuery != nil) {
+		pagination = repositories.PaginationFilter{
+			PageNumber: search.PageNumber,
+			PageSize: search.PageSize,
+		}
+	}
+
+	users, count := us.userRepo.GetPaged(filter, []repositories.SortFilter{sort}, pagination)
 
 	var response []responses.UserResponseModel
 	for _, user := range users {

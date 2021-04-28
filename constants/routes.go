@@ -13,6 +13,7 @@ const (
 	GetUserByIdRoute        = UsersBaseRoute + "/{id}"
 	ChangeUserPasswordRoute = UsersBaseRoute + "/change-password"
 	UpdateUserRoute         = UsersBaseRoute
+	GetTopUsersRoute        = UsersBaseRoute + "-top"
 	GetUsersQuestionsRoute  = UsersBaseRoute + "/{id}/questions"
 
 	QuestionsBaseRoute        = ApiRoot + "/questions"

@@ -69,6 +69,7 @@ func main() {
 	usersGetRouter.HandleFunc(constants.GetUsersRoute, uc.Get)
 	usersGetRouter.HandleFunc(constants.GetUserByIdRoute, uc.GetById)
 	usersGetRouter.HandleFunc(constants.GetUsersQuestionsRoute, uc.GetQuestions)
+	usersGetRouter.HandleFunc(constants.GetTopUsersRoute, uc.GetTop)
 	
 
 	usersPostRoutes := r.Methods(http.MethodPost).Subrouter()

@@ -14,15 +14,31 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db}
 }
 
-type UserFilter struct {
-
+type SortFilter struct {
+	Column string
+	Order string
 }
 
-func (ur *UserRepository) GetPaged (filter UserFilter, pagination PaginationFilter) ([]domain.User, int64) {
+type UserFilter struct {
+}
+
+func (ur *UserRepository) GetPaged (filter UserFilter, sorting []SortFilter, pagination PaginationFilter) ([]domain.User, int64) {
 	var users []domain.User
 	query := ur.db.Model(&domain.User{})
 
 	var count int64
+
+	var sortStr string
+	for i, sort := range sorting {
+		sortStr = sort.Column + " " + sort.Order
+		if i < len(sorting) - 1 {
+			sortStr = sortStr + ","
+		}
+	}
+	
+	if sortStr != "" {
+		query = query.Order(sortStr)
+	}
 
 	query.Count(&count)
 
