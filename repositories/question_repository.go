@@ -24,11 +24,21 @@ type QuestionFilter struct {
 	UserID uint
 }
 
-func (ur *QuestionRepository) GetPaged (filter QuestionFilter, pagination PaginationFilter) ([]domain.Question, int64) {
+func (ur *QuestionRepository) GetPaged (filter QuestionFilter, sorting []SortFilter, pagination PaginationFilter) ([]domain.Question, int64) {
 	var questions []domain.Question
 	query := ur.db.Model(&domain.Question{})
 
-	var count int64
+	var sortStr string
+	for i, sort := range sorting {
+		sortStr = sort.Column + " " + sort.Order
+		if i < len(sorting) - 1 {
+			sortStr = sortStr + ","
+		}
+	}
+	
+	if sortStr != "" {
+		query = query.Order(sortStr)
+	}
 
 	if (QuestionFilter{} != filter) {
 		
@@ -37,6 +47,7 @@ func (ur *QuestionRepository) GetPaged (filter QuestionFilter, pagination Pagina
 		}
 	}
 
+	var count int64
 	query.Count(&count)
 
 	if (PaginationFilter{} != pagination) {

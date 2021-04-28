@@ -236,7 +236,12 @@ func (us *UserService) GetQuestions (userId uint, search requests.QuestionSearch
 		}
 	}
 
-	questions, count := us.questionRepo.GetPaged(filter, pagination)
+	sort := repositories.SortFilter{
+		Column: "created_at",
+		Order: "desc",
+	}
+
+	questions, count := us.questionRepo.GetPaged(filter, []repositories.SortFilter{sort}, pagination)
 
 	var response []responses.QuestionResponseModel
 	for _, question := range questions {
