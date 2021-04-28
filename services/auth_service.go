@@ -5,7 +5,6 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -29,6 +28,18 @@ func NewAuthService(repo *repositories.UserRepository) *AuthService {
 
 func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthResponse, *responses.ErrorResponse) {
 	user, err := as.repo.GetByEmail(req.Email)
+
+	if err != nil {
+		resErr := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: "An error occurred",
+		}
+
+		errors := responses.NewErrorResponse(resErr)	
+
+
+		return nil, errors
+	}
 
 	if user.ID == 0 {
 		err := responses.ErrorResponseModel{
@@ -140,32 +151,23 @@ func doPasswordsMatch(passwordHash string, currPassword string, salt string) boo
 
 func generateJWT(user domain.User) (string, error) {
 	secretKey := []byte(os.Getenv("JWT_SECRET_KEY"))
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-
 	tokenLifetime, err := strconv.Atoi(os.Getenv("JWT_TOKEN_LIFETIME_IN_MINUTES"))
 
 	if err != nil {
 		return "", err
 	}
 
-	claims["iss"] = os.Getenv("JWT_ISSUER")
-	claims["aud"] = os.Getenv("JWT_AUDIENCE")
-	claims["sub"] = fmt.Sprint(user.ID)
-	claims["iat"] = fmt.Sprint(time.Now().Unix())
-	claims["nbf"] = fmt.Sprint(time.Now().Unix())
-	claims["exp"] = fmt.Sprint(time.Now().Add(time.Second * time.Duration(tokenLifetime)).Unix())
-	
-	claims["email"] = user.Email
-
-	tokenString, err := token.SignedString(secretKey)
-	if err != nil {
-		log.Println("Error in JWT token generation")
-		return "", err
+	claims := jwt.StandardClaims{
+		Issuer: os.Getenv("JWT_ISSUER"),
+		Audience: os.Getenv("JWT_AUDIENCE"),
+		Subject: fmt.Sprint(user.ID),
+		IssuedAt: time.Now().Unix(),
+		NotBefore: time.Now().Unix(),
+		ExpiresAt: time.Now().Add(time.Second * time.Duration(tokenLifetime)).Unix(),
 	}
 
-	return tokenString, nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(secretKey)
 }
 
 func generateAuthResponse(user domain.User) (*responses.AuthResponse, error) {

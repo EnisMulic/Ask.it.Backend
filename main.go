@@ -9,6 +9,7 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/constants"
 	"github.com/EnisMulic/Ask.it.Backend/controllers"
 	"github.com/EnisMulic/Ask.it.Backend/database"
+	"github.com/EnisMulic/Ask.it.Backend/middleware"
 	"github.com/EnisMulic/Ask.it.Backend/repositories"
 	"github.com/EnisMulic/Ask.it.Backend/services"
 	"github.com/gorilla/mux"
@@ -56,6 +57,7 @@ func main() {
 
 	userGetRouter := r.Methods(http.MethodGet).Subrouter()
 	userGetRouter.HandleFunc(constants.GetMeRoute, uc.GetMe)
+	userGetRouter.Use(middleware.IsAuthorized)
 
 	// auth routers
 	authPostRouter := r.Methods(http.MethodPost).Subrouter()
@@ -72,6 +74,7 @@ func main() {
 	usersPostRoutes := r.Methods(http.MethodPost).Subrouter()
 	usersPostRoutes.HandleFunc(constants.ChangeUserPasswordRoute, uc.ChangePassword)
 	usersPostRoutes.HandleFunc(constants.UpdateUserRoute, uc.Update)
+	usersPostRoutes.Use(middleware.IsAuthorized)
 
 	// questions routers
 	questionsGetRouter := r.Methods(http.MethodGet).Subrouter()
@@ -89,8 +92,11 @@ func main() {
 	questionsPostRouter.HandleFunc(constants.DislikeQuestionRoute, qc.Dislike)
 	questionsPostRouter.HandleFunc(constants.DislikeQuestionUndoRoute, qc.DislikeUndo)
 
+	questionsPostRouter.Use(middleware.IsAuthorized)
+
 	questionsDeleteRouter := r.Methods(http.MethodDelete).Subrouter()
 	questionsDeleteRouter.HandleFunc(constants.DeleteQuestionRoute, qc.Delete)
+	questionsDeleteRouter.Use(middleware.IsAuthorized)
 	
 	// answer routers
 	answerPostRouter := r.Methods(http.MethodPost).Subrouter()
@@ -100,13 +106,16 @@ func main() {
 	questionsPostRouter.HandleFunc(constants.DislikeAnswerRoute, answc.Dislike)
 	questionsPostRouter.HandleFunc(constants.DislikeAnswerUndoRoute, answc.DislikeUndo)
 
+	questionsPostRouter.Use(middleware.IsAuthorized)
+
 	answerPutRouter := r.Methods(http.MethodPut).Subrouter()
 	answerPutRouter.HandleFunc(constants.UpdateAnswerRoute, answc.Update)
-
+	answerPutRouter.Use(middleware.IsAuthorized)
 	
 
 	answerDeleteRouter := r.Methods(http.MethodDelete).Subrouter()
 	answerDeleteRouter.HandleFunc(constants.DeleteAnswerRoute, answc.Delete)
+	answerDeleteRouter.Use(middleware.IsAuthorized)
 
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swaggerui/"))))
 	
