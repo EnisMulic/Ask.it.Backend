@@ -36,7 +36,9 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 
 	res, resErr := ac.as.Login(req)
 	if resErr != nil {
-		http.Error(rw, resErr.Error(), http.StatusInternalServerError)
+		out, _ := json.Marshal(resErr)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 

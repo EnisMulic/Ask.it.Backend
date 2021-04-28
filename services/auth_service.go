@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/EnisMulic/Ask.it.Backend/constants"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/domain"
@@ -26,11 +27,18 @@ func NewAuthService(repo *repositories.UserRepository) *AuthService {
 	return &AuthService{repo}
 }
 
-func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthResponse, error) {
+func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthResponse, *responses.ErrorResponse) {
 	user, err := as.repo.GetByEmail(req.Email)
 
-	if err == nil {
-		return nil, err
+	if user.ID == 0 {
+		err := responses.ErrorResponseModel{
+			FieldName: "email",
+			Message: constants.EmailIsTakenError,
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
 	}
 
 	var salt = generateRandomSalt(saltSize)
@@ -46,24 +54,50 @@ func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthR
 	
 	newUser, err := as.repo.Create(user)
 	if err != nil {
-		return nil, err
+		resErr := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: "An error occurred",
+		}
+
+		errors := responses.NewErrorResponse(resErr)	
+
+
+		return nil, errors
 	}
 
-	return generateAuthResponse(newUser)
+	res, _ := generateAuthResponse(newUser)
+
+	return res, nil
 }
 
-func (as *AuthService) Login (req requests.LoginRequest) (*responses.AuthResponse, error) {
-	user, err := as.repo.GetByEmail(req.Email)
+func (as *AuthService) Login (req requests.LoginRequest) (*responses.AuthResponse, *responses.ErrorResponse) {
+	user, _ := as.repo.GetByEmail(req.Email)
 
-	if err != nil {
-		return nil, err
+	if user.ID == 0 {
+		err := responses.ErrorResponseModel{
+			FieldName: "email",
+			Message: constants.EmailIsTakenError,
+		}
+
+		errors := responses.NewErrorResponse(err)	
+
+		return nil, errors
 	}
 
 	if !doPasswordsMatch(user.PasswordHash, req.Password, user.PasswordSalt) {
-		return nil, fmt.Errorf(`{"response":"Wrong Password!"}`)
+		resErr := responses.ErrorResponseModel{
+			FieldName: "",
+			Message: "Wrong Password!",
+		}
+
+		errors := responses.NewErrorResponse(resErr)
+
+		return nil, errors
 	}
 
-	return generateAuthResponse(user)
+	res, _ := generateAuthResponse(user)
+
+	return res, nil
 }
 
 const saltSize = 16
