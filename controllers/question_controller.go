@@ -46,6 +46,28 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// swagger:route GET /api/questions-top questions questions 
+//
+// responses:
+//	200: QuestionsResponse
+func (qc *QuestionController) GetHot(rw http.ResponseWriter, r *http.Request) {
+	var request requests.QuestionSearchRequest
+
+	err := decoder.Decode(&request, r.URL.Query())
+    if err != nil {
+        log.Println("Error in GET parameters : ", err)
+		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+		return
+    } 
+
+	users := qc.qs.GetHot(request)
+
+	err = json.NewEncoder(rw).Encode(users)
+	if err != nil {
+		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+	}
+}
+
 // swagger:route GET /api/questions/{id} questions question
 //
 // responses:

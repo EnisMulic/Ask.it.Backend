@@ -59,6 +59,37 @@ func (qs *QuestionService) Get (search requests.QuestionSearchRequest) *response
 	}
 }
 
+func (qs *QuestionService) GetHot (search requests.QuestionSearchRequest) *responses.QuestionsReponse {
+	var filter repositories.QuestionFilter
+	var pagination repositories.PaginationFilter
+
+	if (search.PaginationQuery != nil) {
+		pagination = repositories.PaginationFilter{
+			PageNumber: search.PageNumber,
+			PageSize: search.PageSize,
+		}
+	}
+
+	sort := repositories.SortFilter{
+		Column: "likes",
+		Order: "desc",
+	}
+
+	questions, count := qs.repo.GetPaged(filter, []repositories.SortFilter{sort}, pagination)
+
+	var response []responses.QuestionResponseModel
+	for _, question := range questions {
+		questionResponse := utils.ConvertToQuestionResponseModel(question)
+		response = append(response, questionResponse)
+	}
+
+	if (search != requests.QuestionSearchRequest{}) {
+		return utils.CreateQuestionPagedResponse(response, count, int64(search.PageNumber), int64(search.PageSize))
+	} else {
+		return utils.CreateQuestionPagedResponse(response, count, 0, 0)
+	}
+}
+
 func (qs *QuestionService) GetById (id uint) (*responses.QuestionResponse, *responses.ErrorResponse) {
 	question, _ := qs.repo.GetById(id)
 

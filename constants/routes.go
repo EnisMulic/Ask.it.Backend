@@ -18,6 +18,7 @@ const (
 
 	QuestionsBaseRoute        = ApiRoot + "/questions"
 	GetQuestionsRoute         = QuestionsBaseRoute
+	GetHotQuestionsRoute      = QuestionsBaseRoute + "-hot"
 	GetQuestionByIdRoute      = QuestionsBaseRoute + "/{id}"
 	CreateQuestionRoute       = QuestionsBaseRoute
 	DeleteQuestionRoute       = QuestionsBaseRoute + "/{id}"
