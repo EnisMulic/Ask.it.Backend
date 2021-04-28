@@ -59,7 +59,7 @@ func (uc *UserController) Get(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /api/users users users
+// swagger:route GET /api/users-top users users
 // Returns a list of users
 //
 // parameters:

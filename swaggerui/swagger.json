@@ -137,6 +137,19 @@
         }
       }
     },
+    "/api/questions-top": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "operationId": "questions",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/QuestionsResponse"
+          }
+        }
+      }
+    },
     "/api/questions/{id}": {
       "get": {
         "tags": [
@@ -232,6 +245,30 @@
         "responses": {
           "200": {
             "$ref": "#/responses/UserResponse"
+          }
+        }
+      }
+    },
+    "/api/users-top": {
+      "get": {
+        "description": "Returns a list of users",
+        "tags": [
+          "users"
+        ],
+        "operationId": "users",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query"
+          },
+          {
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UsersResponse"
           }
         }
       }
