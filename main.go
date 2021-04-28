@@ -58,9 +58,11 @@ func main() {
 	userGetRouter := r.Methods(http.MethodGet).Subrouter()
 	userGetRouter.HandleFunc(constants.GetMeRoute, uc.GetMe)
 	userGetRouter.Use(middleware.IsAuthorized)
+	userGetRouter.Use(middleware.AddContentType)
 
 	// auth routers
 	authPostRouter := r.Methods(http.MethodPost).Subrouter()
+	authPostRouter.Use(middleware.AddContentType)
 	authPostRouter.HandleFunc(constants.LoginRoute, ac.Login)
 	authPostRouter.HandleFunc(constants.RegisterRoute, ac.Register)
 
@@ -70,11 +72,12 @@ func main() {
 	usersGetRouter.HandleFunc(constants.GetUserByIdRoute, uc.GetById)
 	usersGetRouter.HandleFunc(constants.GetUsersQuestionsRoute, uc.GetQuestions)
 	usersGetRouter.HandleFunc(constants.GetTopUsersRoute, uc.GetTop)
-	
+	usersGetRouter.Use(middleware.AddContentType)
 
 	usersPostRoutes := r.Methods(http.MethodPost).Subrouter()
 	usersPostRoutes.HandleFunc(constants.ChangeUserPasswordRoute, uc.ChangePassword)
 	usersPostRoutes.HandleFunc(constants.UpdateUserRoute, uc.Update)
+	usersPostRoutes.Use(middleware.AddContentType)
 	usersPostRoutes.Use(middleware.IsAuthorized)
 
 	// questions routers
@@ -82,9 +85,10 @@ func main() {
 	questionsGetRouter.HandleFunc(constants.GetQuestionsRoute, qc.Get)
 	questionsGetRouter.HandleFunc(constants.GetQuestionByIdRoute, qc.GetById)
 	questionsGetRouter.HandleFunc(constants.GetHotQuestionsRoute, qc.GetHot)
-	
-	questionsPostRouter := r.Methods(http.MethodPost).Subrouter()
+	questionsGetRouter.Use(middleware.AddContentType)
 
+	questionsPostRouter := r.Methods(http.MethodPost).Subrouter()
+	
 	questionsPostRouter.HandleFunc(constants.CreateQuestionRoute, qc.Create)
 	questionsPostRouter.HandleFunc(constants.CreateQuestionAnswerRoute, qc.CreateAnswer)
 
@@ -94,10 +98,12 @@ func main() {
 	questionsPostRouter.HandleFunc(constants.DislikeQuestionRoute, qc.Dislike)
 	questionsPostRouter.HandleFunc(constants.DislikeQuestionUndoRoute, qc.DislikeUndo)
 
+	questionsPostRouter.Use(middleware.AddContentType)
 	questionsPostRouter.Use(middleware.IsAuthorized)
 
 	questionsDeleteRouter := r.Methods(http.MethodDelete).Subrouter()
 	questionsDeleteRouter.HandleFunc(constants.DeleteQuestionRoute, qc.Delete)
+	questionsDeleteRouter.Use(middleware.AddContentType)
 	questionsDeleteRouter.Use(middleware.IsAuthorized)
 	
 	// answer routers
@@ -108,15 +114,17 @@ func main() {
 	questionsPostRouter.HandleFunc(constants.DislikeAnswerRoute, answc.Dislike)
 	questionsPostRouter.HandleFunc(constants.DislikeAnswerUndoRoute, answc.DislikeUndo)
 
+	questionsPostRouter.Use(middleware.AddContentType)
 	questionsPostRouter.Use(middleware.IsAuthorized)
 
 	answerPutRouter := r.Methods(http.MethodPut).Subrouter()
 	answerPutRouter.HandleFunc(constants.UpdateAnswerRoute, answc.Update)
+	answerPutRouter.Use(middleware.AddContentType)
 	answerPutRouter.Use(middleware.IsAuthorized)
-	
 
 	answerDeleteRouter := r.Methods(http.MethodDelete).Subrouter()
 	answerDeleteRouter.HandleFunc(constants.DeleteAnswerRoute, answc.Delete)
+	answerDeleteRouter.Use(middleware.AddContentType)
 	answerDeleteRouter.Use(middleware.IsAuthorized)
 
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swaggerui/"))))
@@ -125,7 +133,7 @@ func main() {
 		AllowedOrigins: []string{os.Getenv("CLIENT_APP")},
 		AllowCredentials: true,
 		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{"Content-Type"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
 	})
 
 	addr := os.Getenv("API_ADDRESS")
