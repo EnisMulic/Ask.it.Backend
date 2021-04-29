@@ -1,6 +1,11 @@
 package utils
 
-import "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+import (
+	"math"
+
+	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+)
+
 
 func GetIntPointer(value int64) *int64 {
     return &value
@@ -12,7 +17,7 @@ func CreateQuestionPagedResponse(data []responses.QuestionResponseModel, count i
 	}
 
 	if pageSize > 1 {
-		response.LastPage = count / pageSize
+		response.LastPage = int64(math.Ceil(float64(count) / float64(pageSize)))
 	} else {
 		response.LastPage = 1
 	}
@@ -52,7 +57,7 @@ func CreateUserPagedResponse(data []responses.UserResponseModel, count int64, pa
 	}
 	
 	if pageSize > 1 {
-		response.LastPage = count / pageSize
+		response.LastPage = int64(math.Ceil(float64(count) / float64(pageSize)))
 	} else {
 		response.LastPage = 1
 	}
