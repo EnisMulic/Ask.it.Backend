@@ -35,4 +35,6 @@ const (
 	LikeAnswerUndoRoute    = AnswerBaseRoute + "/{id}/like/undo"
 	DislikeAnswerRoute     = AnswerBaseRoute + "/{id}/dislike"
 	DislikeAnswerUndoRoute = AnswerBaseRoute + "/{id}/dislike/undo"
+
+	NotificationRoute = "/ws/notifications/{id}"
 )
