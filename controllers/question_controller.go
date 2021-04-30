@@ -42,7 +42,14 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(rw).Encode(users)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -64,7 +71,14 @@ func (qc *QuestionController) GetHot(rw http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(rw).Encode(users)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -83,7 +97,7 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -180,7 +194,7 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
@@ -227,7 +241,7 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
@@ -272,7 +286,7 @@ func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request)
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
@@ -317,7 +331,7 @@ func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) 
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
@@ -362,7 +376,7 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
@@ -409,7 +423,7 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 

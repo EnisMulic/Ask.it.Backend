@@ -7,6 +7,7 @@ import (
 
 	"github.com/EnisMulic/Ask.it.Backend/constants"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/services"
 )
 
@@ -44,7 +45,14 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(rw).Encode(res)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -71,12 +79,20 @@ func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 
 	res, resErr := ac.as.Register(req)
 	if resErr != nil {
-		http.Error(rw, "", http.StatusInternalServerError)
+		out, _ := json.Marshal(resErr)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 
 	err = json.NewEncoder(rw).Encode(res)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusInternalServerError)
+		return
 	}
 }

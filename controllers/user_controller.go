@@ -105,7 +105,7 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -306,7 +306,7 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 

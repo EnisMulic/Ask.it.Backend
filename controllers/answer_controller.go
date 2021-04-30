@@ -37,7 +37,7 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -110,7 +110,7 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -204,7 +204,7 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
@@ -249,7 +249,7 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
@@ -294,7 +294,7 @@ func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request
 
 		out, _ := json.Marshal(errors)
 
-		http.Error(rw, string(out), http.StatusNotFound)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
