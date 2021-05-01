@@ -20,6 +20,7 @@ type QuestionService struct {
 	repo *repositories.QuestionRepository
 	ratingRepo *repositories.UserQuestionRatingRepository
 	answerRepo *repositories.AnswerRepository
+	answerNotificationRepo *repositories.AnswerNotificationRepository
 	pool *websockets.Pool
 }
 
@@ -27,9 +28,10 @@ func NewQuestionService(
 	repo *repositories.QuestionRepository, 
 	ratingRepo *repositories.UserQuestionRatingRepository,
 	answerRepo *repositories.AnswerRepository,
+	answerNotificationRepo *repositories.AnswerNotificationRepository,
 	pool *websockets.Pool,
 ) *QuestionService {
-	return &QuestionService{repo, ratingRepo, answerRepo, pool}
+	return &QuestionService{repo, ratingRepo, answerRepo, answerNotificationRepo, pool}
 } 
 
 func (qs *QuestionService) Get (search requests.QuestionSearchRequest) *responses.QuestionsReponse {
@@ -343,17 +345,24 @@ func (qs *QuestionService) CreateAnswer (questionId uint, userId uint, req reque
 	response := utils.ConvertToAnswerResponseModel(newAnswer)
 
 	if question.UserID != userId {
-		notification := responses.AnswerNotification{
+		notification := domain.AnswerNotification{
+			UserID: question.UserID,
+			AnswerID: newAnswer.ID,
 			QuestionID: question.ID,
-			Question: question.Content,
-			User: newAnswer.User.Email,
+			Content: newAnswer.User.Email + " answerd you question: " + question.Content,
+			IsRead: false,
 		}
 
-		msg, _ := json.Marshal(notification)
+		notification, _ = qs.answerNotificationRepo.Create(notification)
+
+		n := utils.ConvertToAnswerNotification(notification)
+
+		msg, _ := json.Marshal(n)
 		
 		qs.pool.Broadcast <- websockets.Message{
-			ClientID: uint64(userId), 
+			ClientID: uint64(question.UserID), 
 			Body: string(msg),
+			Type: 0,
 		}
 	}
 	

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/EnisMulic/Ask.it.Backend/constants"
@@ -46,10 +48,11 @@ func main() {
 	questionRatingRepo := repositories.NewUserQuestionRatingRepository(db)
 	answerRepo := repositories.NewAnswerRepository(db)
 	answerRatingRepo := repositories.NewUserAnswerRatingRepository(db)
+	answerNotificationRepo := repositories.NewAnswerNotificationRepository(db)
 
 	authSevice := services.NewAuthService(userRepo)
 	userService := services.NewUserService(userRepo, questionRepo)
-	questionService := services.NewQuestionService(questionRepo, questionRatingRepo, answerRepo, pool)
+	questionService := services.NewQuestionService(questionRepo, questionRatingRepo, answerRepo, answerNotificationRepo, pool)
 	answerService := services.NewAnswerRepository(answerRepo, answerRatingRepo)
 
 	ac := controllers.NewAuthController(logger, authSevice)
@@ -154,9 +157,25 @@ func main() {
 		ReadTimeout: 15 * time.Second,
 	}
 	
-	err = srv.ListenAndServe()
+	go func() {
+		err := srv.ListenAndServe()
+		if err != nil {
+			logger.Fatal(err)
+		}
+	}()
 
-	if err != nil {
-		log.Fatal(err.Error())
+	
+	signalChannel := make(chan os.Signal, 1)
+	signal.Notify(signalChannel, os.Interrupt)
+
+	
+	signal := <-signalChannel
+	log.Println("Got signal:", signal)
+
+	ctx, erro := context.WithTimeout(context.Background(), 30*time.Second)
+	if erro != nil {
+		log.Fatal(erro)
 	}
+
+	srv.Shutdown(ctx)
 }

@@ -15,6 +15,7 @@ func Migrate(db *gorm.DB) {
 	db.AutoMigrate(&domain.Answer{})
 	db.AutoMigrate(&domain.UserQuestionRating{})
 	db.AutoMigrate(&domain.UserAnswerRating{})
+	db.AutoMigrate(&domain.AnswerNotification{})
 
 	err := db.SetupJoinTable(&domain.User{}, "QuestionRatings", &domain.UserQuestionRating{})
 

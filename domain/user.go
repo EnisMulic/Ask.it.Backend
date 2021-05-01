@@ -16,4 +16,5 @@ type User struct {
 	AnswerRatings []Answer `gorm:"many2many:user_answer_ratings;"`
 	UserQuestionRatings []UserQuestionRating `gorm:"->"`
 	UserAnswerRatings []UserAnswerRating `gorm:"->"`
+	AnswerNotifications []AnswerNotification
 }

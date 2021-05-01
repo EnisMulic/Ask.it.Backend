@@ -1,7 +1,10 @@
 package responses
 
 type AnswerNotification struct {
+	ID         uint
 	QuestionID uint
-	Question   string
-	User       string
+	AnswerID   uint
+	UserID     uint
+	Content    string
+	IsRead     bool
 }

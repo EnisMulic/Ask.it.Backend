@@ -481,5 +481,5 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
-	rw.WriteHeader(http.StatusCreated)
+	//rw.WriteHeader(http.StatusCreated)
 }

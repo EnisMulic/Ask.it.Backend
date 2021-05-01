@@ -24,6 +24,7 @@ func ConvertToUserPersonalInfoResponseModel(user domain.User) responses.UserPers
 		AnswerCount: user.AnswerCount,
 		QuestionRatings: convertToUserQuestionRatingsModel(user.UserQuestionRatings),
 		AnswerRatings: convertToUserAnswerRatingsModel(user.UserAnswerRatings),
+		AnswerNotifications: ConvertToAnswerNotifications(user.AnswerNotifications),
 	}
 }
 
@@ -84,6 +85,27 @@ func ConvertToAnswerResponseModels(answers []domain.Answer) []responses.AnswerRe
 	for _, answer := range answers {
 		answerModel := ConvertToAnswerResponseModel(answer)
 		list = append(list, answerModel)
+	}
+	
+	return list
+}
+
+func ConvertToAnswerNotification(notification domain.AnswerNotification) responses.AnswerNotification {
+	return responses.AnswerNotification{
+		ID: notification.ID,
+		AnswerID: notification.AnswerID,
+		UserID: notification.UserID,
+		QuestionID: notification.QuestionID,
+		Content: notification.Content,
+		IsRead: notification.IsRead,
+	}
+}
+
+func ConvertToAnswerNotifications(answers []domain.AnswerNotification) []responses.AnswerNotification {
+	var list []responses.AnswerNotification
+	for _, n := range answers {
+		notification := ConvertToAnswerNotification(n)
+		list = append(list, notification)
 	}
 	
 	return list

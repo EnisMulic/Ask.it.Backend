@@ -33,13 +33,14 @@ type UserAnswerRatingModel struct {
 }
 
 type UserPersonalInfoResponseModel struct {
-	ID              uint
-	FirstName       string
-	LastName        string
-	Email           string
-	AnswerCount     int
-	QuestionRatings []UserQuestionRatingModel
-	AnswerRatings   []UserAnswerRatingModel
+	ID                  uint
+	FirstName           string
+	LastName            string
+	Email               string
+	AnswerCount         int
+	QuestionRatings     []UserQuestionRatingModel
+	AnswerRatings       []UserAnswerRatingModel
+	AnswerNotifications []AnswerNotification
 }
 
 type UserPersonalInfoResponse struct {

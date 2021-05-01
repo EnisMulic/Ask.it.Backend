@@ -53,6 +53,7 @@ func (nc *NotificationHandler) ServeWS(pool *Pool, rw http.ResponseWriter, r *ht
 	conn, err := Upgrade(rw, r)
     if err != nil {
         fmt.Fprintf(rw, "%+V\n", err)
+		return
     }
     
 	client := &Client{
