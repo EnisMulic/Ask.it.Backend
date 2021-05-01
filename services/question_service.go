@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
@@ -8,6 +9,7 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/domain"
 	"github.com/EnisMulic/Ask.it.Backend/repositories"
 	"github.com/EnisMulic/Ask.it.Backend/utils"
+	"github.com/EnisMulic/Ask.it.Backend/websockets"
 )
 
 var ErrorQuestionNotFound error = errors.New("question not found")
@@ -18,14 +20,16 @@ type QuestionService struct {
 	repo *repositories.QuestionRepository
 	ratingRepo *repositories.UserQuestionRatingRepository
 	answerRepo *repositories.AnswerRepository
+	pool *websockets.Pool
 }
 
 func NewQuestionService(
 	repo *repositories.QuestionRepository, 
 	ratingRepo *repositories.UserQuestionRatingRepository,
 	answerRepo *repositories.AnswerRepository,
+	pool *websockets.Pool,
 ) *QuestionService {
-	return &QuestionService{repo, ratingRepo, answerRepo}
+	return &QuestionService{repo, ratingRepo, answerRepo, pool}
 } 
 
 func (qs *QuestionService) Get (search requests.QuestionSearchRequest) *responses.QuestionsReponse {
@@ -335,7 +339,23 @@ func (qs *QuestionService) CreateAnswer (questionId uint, userId uint, req reque
 	}
 
 	newAnswer, _ = qs.answerRepo.GetById(newAnswer.ID)
+	question, _ := qs.repo.GetById(newAnswer.QuestionID)
 	response := utils.ConvertToAnswerResponseModel(newAnswer)
+
+	if question.UserID != userId {
+		notification := responses.AnswerNotification{
+			QuestionID: question.ID,
+			Question: question.Content,
+			User: newAnswer.User.Email,
+		}
+
+		msg, _ := json.Marshal(notification)
+		
+		qs.pool.Broadcast <- websockets.Message{
+			ClientID: uint64(userId), 
+			Body: string(msg),
+		}
+	}
 	
 	return &responses.AnswerResponse{Data: response}, nil
 }

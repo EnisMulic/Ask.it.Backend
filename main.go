@@ -12,6 +12,7 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/middleware"
 	"github.com/EnisMulic/Ask.it.Backend/repositories"
 	"github.com/EnisMulic/Ask.it.Backend/services"
+	"github.com/EnisMulic/Ask.it.Backend/websockets"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
@@ -37,6 +38,9 @@ func main() {
 	
 	database.Migrate(db)
 
+	pool := websockets.NewPool()
+    go pool.Start()
+
 	userRepo := repositories.NewUserRepository(db)
 	questionRepo := repositories.NewQuestionRepository(db)
 	questionRatingRepo := repositories.NewUserQuestionRatingRepository(db)
@@ -45,15 +49,21 @@ func main() {
 
 	authSevice := services.NewAuthService(userRepo)
 	userService := services.NewUserService(userRepo, questionRepo)
-	questionService := services.NewQuestionService(questionRepo, questionRatingRepo, answerRepo)
+	questionService := services.NewQuestionService(questionRepo, questionRatingRepo, answerRepo, pool)
 	answerService := services.NewAnswerRepository(answerRepo, answerRatingRepo)
 
 	ac := controllers.NewAuthController(logger, authSevice)
 	uc := controllers.NewUserController(logger, userService)
 	qc := controllers.NewQuestionController(logger, questionService)
 	answc := controllers.NewAnswerController(answerService)
+	
+	r := mux.NewRouter().StrictSlash(true)
 
-	r := mux.NewRouter()
+	nh := websockets.NewNotificationHandler()
+
+	r.HandleFunc(constants.NotificationRoute, func(w http.ResponseWriter, r *http.Request) {
+        nh.ServeWS(pool, w, r)
+    })
 
 	userGetRouter := r.Methods(http.MethodGet).Subrouter()
 	userGetRouter.HandleFunc(constants.GetMeRoute, uc.GetMe)
@@ -143,7 +153,7 @@ func main() {
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout: 15 * time.Second,
 	}
-
+	
 	err = srv.ListenAndServe()
 
 	if err != nil {
