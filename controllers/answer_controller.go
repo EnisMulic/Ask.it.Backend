@@ -32,7 +32,7 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -51,7 +51,7 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -67,7 +67,7 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 	err = decoder.Decode(&req)
     if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: constants.UnableToParseJSONBody,
+			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -76,19 +76,26 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 		return
     } 
 
-	user, errRes := ac.as.Update(uint(id), uint(userId), req)
-
-	if errRes != nil {
+	user, err := ac.as.Update(uint(id), uint(userId), req)
+	
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
 		out, _ := json.Marshal(errRes)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
-		return;
+		if err == constants.ErrAnswerNotFound {
+			http.Error(rw, string(out), http.StatusNotFound)
+		} else if err == constants.ErrUnauthorized {
+			http.Error(rw, string(out), http.StatusUnauthorized)
+		} else {
+			http.Error(rw, string(out), http.StatusInternalServerError)
+		}
+		return
 	}
 
 	err = json.NewEncoder(rw).Encode(user)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: ErrorUnableToMarshalJson.Error(),
+			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -105,7 +112,7 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -124,7 +131,7 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -133,13 +140,20 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errRes := ac.as.Delete(uint(id), uint(userId))
+	err = ac.as.Delete(uint(id), uint(userId))
 
-	if errRes != nil {
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
 		out, _ := json.Marshal(errRes)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
-		return;
+		if err == constants.ErrAnswerNotFound {
+			http.Error(rw, string(out), http.StatusNotFound)
+		} else if err == constants.ErrUnauthorized {
+			http.Error(rw, string(out), http.StatusUnauthorized)
+		} else {
+			http.Error(rw, string(out), http.StatusInternalServerError)
+		}
+		return
 	}
 
 	rw.WriteHeader(http.StatusNoContent)
@@ -153,7 +167,7 @@ func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -172,7 +186,7 @@ func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -181,11 +195,12 @@ func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resErr := ac.as.Like(uint(id), uint(userId))
-	if resErr != nil {
-		out, _ := json.Marshal(resErr)
+	err = ac.as.Like(uint(id), uint(userId))
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+		out, _ := json.Marshal(errRes)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
@@ -199,7 +214,7 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -218,7 +233,7 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -227,11 +242,12 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resErr := ac.as.LikeUndo(uint(id), uint(userId))
-	if resErr != nil {
-		out, _ := json.Marshal(resErr)
+	err = ac.as.LikeUndo(uint(id), uint(userId))
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+		out, _ := json.Marshal(errRes)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
@@ -244,7 +260,7 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -263,7 +279,7 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -272,11 +288,12 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resErr := ac.as.Dislike(uint(id), uint(userId))
-	if resErr != nil {
-		out, _ := json.Marshal(resErr)
+	err = ac.as.Dislike(uint(id), uint(userId))
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+		out, _ := json.Marshal(errRes)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
@@ -289,7 +306,7 @@ func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -308,7 +325,7 @@ func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -317,11 +334,12 @@ func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request
 		return
 	}
 
-	resErr := ac.as.DislikeUndo(uint(id), uint(userId))
-	if resErr != nil {
-		out, _ := json.Marshal(resErr)
+	err = ac.as.DislikeUndo(uint(id), uint(userId))
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+		out, _ := json.Marshal(errRes)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }

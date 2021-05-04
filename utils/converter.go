@@ -110,3 +110,11 @@ func ConvertToAnswerNotifications(answers []domain.AnswerNotification) []respons
 	
 	return list
 }
+
+func ConvertToErrorResponse(err error) *responses.ErrorResponse {
+	errModel := responses.ErrorResponseModel{
+		Message: err.Error(),
+	}
+
+	return responses.NewErrorResponse(errModel)
+}

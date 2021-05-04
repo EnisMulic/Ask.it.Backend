@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/EnisMulic/Ask.it.Backend/constants"
@@ -12,7 +11,7 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/utils"
 )
 
-var ErrorUserNotFound error = errors.New("user not found")
+
 type UserService struct {
 	userRepo *repositories.UserRepository
 	questionRepo *repositories.QuestionRepository
@@ -81,18 +80,18 @@ func (us *UserService) GetTop (search requests.UserSearchRequest) responses.User
 	}
 }
 
-func (us *UserService) GetById (id uint) (*responses.UserResponse, *responses.ErrorResponse) {
+func (us *UserService) GetById (id uint) (*responses.UserResponse, error) {
 	user := us.userRepo.GetById(id)
 
 	if user.ID == 0 {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: ErrorUserNotFound.Error(),
-		}
+		// err := responses.ErrorResponseModel{
+		// 	FieldName: "",
+		// 	Message: ErrorUserNotFound.Error(),
+		// }
 
-		errors := responses.NewErrorResponse(err)	
+		// errors := responses.NewErrorResponse(err)	
 
-		return nil, errors
+		return nil, constants.ErrUserNotFound
 	}
 
 	response := utils.ConvertToUserResponseModel(user)
@@ -100,36 +99,22 @@ func (us *UserService) GetById (id uint) (*responses.UserResponse, *responses.Er
 	return &responses.UserResponse{Data: response}, nil
 }
 
-func (us *UserService) GetPersonalInfo (id uint) (*responses.UserPersonalInfoResponse, *responses.ErrorResponse) {
+func (us *UserService) GetPersonalInfo (id uint) (*responses.UserPersonalInfoResponse, error) {
 	user := us.userRepo.GetPersonalInfo(id)
 
 	if user.ID == 0 {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: ErrorUserNotFound.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return nil, errors
+		return nil, constants.ErrUserNotFound
 	}
 	response := utils.ConvertToUserPersonalInfoResponseModel(user)
 
 	return &responses.UserPersonalInfoResponse{Data: response}, nil
 }
 
-func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*responses.UserResponse, *responses.ErrorResponse){
+func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*responses.UserResponse, error){
 	user := us.userRepo.GetById(id)
 
 	if user.ID == 0 {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: ErrorUserNotFound.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return nil, errors
+		return nil, constants.ErrUserNotFound
 	}
 
 	updatedUser := domain.User{
@@ -143,14 +128,7 @@ func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*respons
 	if err != nil {
 		strErr := err.Error()
 		if strings.Contains(strErr, "Duplicate entry") && strings.Contains(strErr, "email") {
-			err := responses.ErrorResponseModel{
-				FieldName: "email",
-				Message: constants.EmailIsTakenError,
-			}
-
-			errors := responses.NewErrorResponse(err)	
-
-			return nil, errors
+			return nil, constants.ErrEmailIsTaken
 		}
 	}
 
@@ -159,29 +137,15 @@ func (us *UserService) Update(id uint, req requests.UserUpdateRequest) (*respons
 	return &responses.UserResponse{Data: response}, nil
 }
 
-func (us *UserService) ChangePassword(id uint, req requests.ChangePasswordRequest) *responses.ErrorResponse {
+func (us *UserService) ChangePassword(id uint, req requests.ChangePasswordRequest) error {
 	user := us.userRepo.GetById(id)
 
 	if user.ID == 0 {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: ErrorUserNotFound.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return errors
+		return constants.ErrUserNotFound
 	}
 
 	if !doPasswordsMatch(user.PasswordHash, req.Password, user.PasswordSalt) {
-		err := responses.ErrorResponseModel{
-			FieldName: "password",
-			Message: constants.ErrorWrongPassword,
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return errors
+		return constants.ErrWrongPassword
 	}
 
 	salt := generateRandomSalt(saltSize)
@@ -196,31 +160,17 @@ func (us *UserService) ChangePassword(id uint, req requests.ChangePasswordReques
 	user, err := us.userRepo.ChangePassword(user, updatedUser)
 
 	if err != nil {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: err.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return errors
+		return constants.ErrGeneric
 	}
 
 	return nil
 }
 
-func (us *UserService) GetQuestions (userId uint, search requests.QuestionSearchRequest) (*responses.QuestionsReponse, *responses.ErrorResponse) {
+func (us *UserService) GetQuestions (userId uint, search requests.QuestionSearchRequest) (*responses.QuestionsReponse, error) {
 	user := us.userRepo.GetById(userId)
 
 	if user.ID == 0 {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: ErrorUserNotFound.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return nil, errors
+		return nil, constants.ErrUserNotFound
 	}
 
 	filter := repositories.QuestionFilter{

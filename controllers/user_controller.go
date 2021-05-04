@@ -100,7 +100,7 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -145,7 +145,7 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -187,7 +187,7 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 	id, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -203,7 +203,7 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 	err = decoder.Decode(&req)
     if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: constants.UnableToParseJSONBody,
+			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -237,7 +237,7 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -253,7 +253,7 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 	err = decoder.Decode(&req)
     if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: constants.UnableToParseJSONBody,
+			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -262,13 +262,19 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 		return
     } 
 
-	user, errRes := uc.us.Update(uint(id), req)
+	user, err := uc.us.Update(uint(id), req)
 
-	if errRes != nil {
-		out, _ := json.Marshal(errRes)
+	if err != nil {
+		resErr := utils.ConvertToErrorResponse(err)
+		out, _ := json.Marshal(resErr)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
-		return;
+		if err == constants.ErrUserNotFound {
+			http.Error(rw, string(out), http.StatusNotFound)
+		} else if err == constants.ErrEmailIsTaken {
+			http.Error(rw, string(out), http.StatusBadRequest)
+		}
+
+		return
 	}
 
 	err = json.NewEncoder(rw).Encode(user)
@@ -292,7 +298,13 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 
 	err := decoder.Decode(&request, r.URL.Query())
     if err != nil {
-		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.ErrMsgUnableToParseQueryParametars,
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
@@ -301,7 +313,7 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -310,9 +322,10 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	questions, errRes := uc.us.GetQuestions(uint(id), request)
-	if errRes != nil {
-		out, _ := json.Marshal(errRes)
+	questions, err := uc.us.GetQuestions(uint(id), request)
+	if err != nil {
+		resErr := utils.ConvertToErrorResponse(err)
+		out, _ := json.Marshal(resErr)
 
 		http.Error(rw, string(out), http.StatusBadRequest)
 		return;

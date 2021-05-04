@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 
+	"github.com/EnisMulic/Ask.it.Backend/constants"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/domain"
@@ -25,29 +26,15 @@ func (as *AnswerService) Update (
 	answerId uint,
 	userId uint,
 	req requests.AnswerUpdateRequest,
-) (*responses.AnswerResponse, *responses.ErrorResponse) {
+) (*responses.AnswerResponse, error) {
 	answer, _ := as.answerRepo.GetById(answerId)
 
 	if answer.ID == 0 {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: ErrorAnswerNotFound.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return nil, errors
+		return nil, constants.ErrAnswerNotFound
 	}
 
 	if answer.UserID != userId {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: ErrorAnswerEditPermission.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return nil, errors
+		return nil, constants.ErrUnauthorized
 	}
 
 	updatedAnswer := domain.Answer{
@@ -57,14 +44,7 @@ func (as *AnswerService) Update (
 	answer, err := as.answerRepo.Update(answer, updatedAnswer)
 
 	if err != nil {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: err.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return nil, errors
+		return nil, constants.ErrGeneric
 	}
 
 	response := utils.ConvertToAnswerResponseModel(answer)
@@ -73,48 +53,31 @@ func (as *AnswerService) Update (
 	}, nil
 }
 
-func (as *AnswerService) Delete(answerId uint, userId uint ) *responses.ErrorResponse {
+func (as *AnswerService) Delete(answerId uint, userId uint ) error {
 	answer, err := as.answerRepo.GetById(answerId)
 
+	if answer.ID == 0 {
+		return constants.ErrAnswerNotFound
+	}
+
 	if err != nil {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: err.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return errors
+		return constants.ErrGeneric
 	}
 
 	if answer.UserID != userId {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: ErrorAnswerDeletePermission.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return errors
+		return constants.ErrUnauthorized
 	}
 
 	err = as.answerRepo.Delete(answer)
 
 	if err != nil {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: err.Error(),
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return errors
+		return constants.ErrGeneric
 	}
 
 	return nil
 }
 
-func (as *AnswerService) Like (answerId uint, userId uint) *responses.ErrorResponse {
+func (as *AnswerService) Like (answerId uint, userId uint) error {
 	rating, err := as.ratingRepo.Get(answerId, userId)
 	
 	if err != nil {
@@ -125,14 +88,7 @@ func (as *AnswerService) Like (answerId uint, userId uint) *responses.ErrorRespo
 		})
 
 		if err != nil {
-			resErr := responses.ErrorResponseModel{
-				FieldName: "",
-				Message: "An error occurred",
-			}
-
-			errors := responses.NewErrorResponse(resErr)	
-
-			return errors
+			return constants.ErrGeneric
 		}
 
 		return nil
@@ -144,53 +100,32 @@ func (as *AnswerService) Like (answerId uint, userId uint) *responses.ErrorRespo
 		})
 
 		if err != nil {
-			resErr := responses.ErrorResponseModel{
-				FieldName: "",
-				Message: "An error occurred",
-			}
-
-			errors := responses.NewErrorResponse(resErr)	
-
-			return errors
+			return constants.ErrGeneric
 		}
 	}
 
 	return nil
 }
 
-func (as *AnswerService) LikeUndo (answerId uint, userId uint) *responses.ErrorResponse {
+func (as *AnswerService) LikeUndo (answerId uint, userId uint) error {
 	rating, err := as.ratingRepo.Get(answerId, userId)
 
 	if err != nil {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: "An error occurred",
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return errors
+		return constants.ErrGeneric
 	}
 
 	if rating.IsLiked {
 		err := as.ratingRepo.Delete(rating)
 		
 		if err != nil {
-			err := responses.ErrorResponseModel{
-				FieldName: "",
-				Message: "An error occurred",
-			}
-
-			errors := responses.NewErrorResponse(err)	
-
-			return errors
+			return constants.ErrGeneric
 		}
 	}
 
 	return nil
 }
 
-func (as *AnswerService) Dislike (answerId uint, userId uint) *responses.ErrorResponse {
+func (as *AnswerService) Dislike (answerId uint, userId uint) error {
 	rating, err := as.ratingRepo.Get(answerId, userId)
 	
 	if err != nil {
@@ -201,14 +136,7 @@ func (as *AnswerService) Dislike (answerId uint, userId uint) *responses.ErrorRe
 		})
 
 		if err != nil {
-			resErr := responses.ErrorResponseModel{
-				FieldName: "",
-				Message: "An error occurred",
-			}
-
-			errors := responses.NewErrorResponse(resErr)	
-
-			return errors
+			return constants.ErrGeneric
 		}
 
 		return nil
@@ -220,32 +148,18 @@ func (as *AnswerService) Dislike (answerId uint, userId uint) *responses.ErrorRe
 		})
 
 		if err != nil {
-			resErr := responses.ErrorResponseModel{
-				FieldName: "",
-				Message: "An error occurred",
-			}
-
-			errors := responses.NewErrorResponse(resErr)	
-
-			return errors
+			return constants.ErrGeneric
 		}
 	}
 
 	return nil
 }
 
-func (as *AnswerService) DislikeUndo (answerId uint, userId uint) *responses.ErrorResponse {
+func (as *AnswerService) DislikeUndo (answerId uint, userId uint) error {
 	rating, err := as.ratingRepo.Get(answerId, userId)
 
 	if err != nil {
-		err := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: "An error occurred",
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return errors
+		return constants.ErrGeneric
 	}
 
 	if !rating.IsLiked {
@@ -253,14 +167,7 @@ func (as *AnswerService) DislikeUndo (answerId uint, userId uint) *responses.Err
 		err := as.ratingRepo.Delete(rating)
 
 		if err != nil {
-			err := responses.ErrorResponseModel{
-				FieldName: "",
-				Message: "An error occurred",
-			}
-
-			errors := responses.NewErrorResponse(err)	
-
-			return errors
+			return constants.ErrGeneric
 		}
 	}
 

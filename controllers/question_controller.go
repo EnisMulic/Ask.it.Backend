@@ -34,7 +34,14 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&request, r.URL.Query())
     if err != nil {
         log.Println("Error in GET parameters : ", err)
-		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.ErrMsgUnableToParseQueryParametars,
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
@@ -43,7 +50,7 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(rw).Encode(users)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: ErrorUnableToMarshalJson.Error(),
+			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -62,8 +69,13 @@ func (qc *QuestionController) GetHot(rw http.ResponseWriter, r *http.Request) {
 
 	err := decoder.Decode(&request, r.URL.Query())
     if err != nil {
-        log.Println("Error in GET parameters : ", err)
-		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+        errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.ErrMsgUnableToParseQueryParametars,
+		})
+
+		out, _ := json.Marshal(errors)
+
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
@@ -72,7 +84,7 @@ func (qc *QuestionController) GetHot(rw http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(rw).Encode(users)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: ErrorUnableToMarshalJson.Error(),
+			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -92,7 +104,7 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -101,10 +113,13 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, errRes := qc.qs.GetById(uint(id))
+	user, err := qc.qs.GetById(uint(id))
 
-	if errRes != nil {
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+
 		out, _ := json.Marshal(errRes)
+
 		http.Error(rw, string(out), http.StatusNotFound)
 		return
 	}
@@ -112,7 +127,7 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(rw).Encode(user)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: ErrorUnableToMarshalJson.Error(),
+			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -136,7 +151,7 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -152,7 +167,7 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 	err = decoder.Decode(&req)
     if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: constants.UnableToParseJSONBody,
+			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -161,9 +176,12 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 		return
     } 
 
-	question, resErr := qc.qs.Create(uint(userId), req)
-	if resErr != nil {
-		out, _ := json.Marshal(resErr)
+	question, err := qc.qs.Create(uint(userId), req)
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+
+		out, _ := json.Marshal(errRes)
+
 
 		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
@@ -172,7 +190,7 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(rw).Encode(question)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: ErrorUnableToMarshalJson.Error(),
+			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -189,7 +207,7 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -208,7 +226,7 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -217,11 +235,16 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resErr := qc.qs.Delete(uint(id), uint(userId))
-	if resErr != nil {
-		out, _ := json.Marshal(resErr)
+	err = qc.qs.Delete(uint(id), uint(userId))
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+		out, _ := json.Marshal(errRes)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		if err == constants.ErrQuestionNotFound {
+			http.Error(rw, string(out), http.StatusNotFound)
+		} else if err == constants.ErrUnauthorized {
+			http.Error(rw, string(out), http.StatusUnauthorized)
+		}
 		return
 	}
 
@@ -236,7 +259,7 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -255,7 +278,7 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -264,11 +287,12 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resErr := qc.qs.Like(uint(id), uint(userId))
-	if resErr != nil {
+	err = qc.qs.Like(uint(id), uint(userId))
+	if err != nil {
+		resErr := utils.ConvertToErrorResponse(err)
 		out, _ := json.Marshal(resErr)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
@@ -281,7 +305,7 @@ func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request)
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -300,7 +324,7 @@ func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request)
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -309,11 +333,12 @@ func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	resErr := qc.qs.LikeUndo(uint(id), uint(userId))
-	if resErr != nil {
+	err = qc.qs.LikeUndo(uint(id), uint(userId))
+	if err != nil {
+		resErr := utils.ConvertToErrorResponse(err)
 		out, _ := json.Marshal(resErr)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
@@ -326,7 +351,7 @@ func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) 
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -345,7 +370,7 @@ func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) 
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -354,11 +379,12 @@ func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	resErr := qc.qs.Dislike(uint(id), uint(userId))
-	if resErr != nil {
+	err = qc.qs.Dislike(uint(id), uint(userId))
+	if err != nil {
+		resErr := utils.ConvertToErrorResponse(err)
 		out, _ := json.Marshal(resErr)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
@@ -371,7 +397,7 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -390,7 +416,7 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -399,11 +425,12 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	resErr := qc.qs.DislikeUndo(uint(id), uint(userId))
-	if resErr != nil {
+	err = qc.qs.DislikeUndo(uint(id), uint(userId))
+	if err != nil {
+		resErr := utils.ConvertToErrorResponse(err)
 		out, _ := json.Marshal(resErr)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
+		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
@@ -418,7 +445,7 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -437,7 +464,7 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 	userId, err := strconv.ParseUint(sub, 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: "Unable to convert id",
+			Message: constants.ErrMsgUnableToConvertId,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -453,7 +480,7 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 	err = decoder.Decode(&req)
     if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: constants.UnableToParseJSONBody,
+			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
 		out, _ := json.Marshal(errors)
@@ -462,8 +489,9 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 		return
     } 
 
-	question, resErr := qc.qs.CreateAnswer(uint(id), uint(userId), req)
-	if resErr != nil {
+	question, err := qc.qs.CreateAnswer(uint(id), uint(userId), req)
+	if err != nil {
+		resErr := utils.ConvertToErrorResponse(err)
 		out, _ := json.Marshal(resErr)
 
 		http.Error(rw, string(out), http.StatusInternalServerError)
@@ -473,7 +501,7 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 	err = json.NewEncoder(rw).Encode(question)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
-			Message: ErrorUnableToMarshalJson.Error(),
+			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
 		out, _ := json.Marshal(errors)

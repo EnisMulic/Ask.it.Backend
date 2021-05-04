@@ -31,7 +31,12 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 	
 	err := decoder.Decode(&req)
     if err != nil {
-		http.Error(rw, constants.UnableToParseJSONBody, http.StatusBadRequest)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.ErrMsgUnableToParseJSONBody,
+		})
+
+		out, _ := json.Marshal(errors)
+		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
@@ -73,7 +78,7 @@ func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 	
 	err := decoder.Decode(&req)
     if err != nil {
-		http.Error(rw, constants.UnableToParseJSONBody, http.StatusBadRequest)
+		http.Error(rw, constants.ErrMsgUnableToParseJSONBody, http.StatusBadRequest)
 		return
     } 
 

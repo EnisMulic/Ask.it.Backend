@@ -26,30 +26,30 @@ func NewAuthService(repo *repositories.UserRepository) *AuthService {
 	return &AuthService{repo}
 }
 
-func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthResponse, *responses.ErrorResponse) {
+func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthResponse, error) {
 	user, err := as.repo.GetByEmail(req.Email)
 
 	if err != nil {
-		resErr := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: "An error occurred",
-		}
+		// resErr := responses.ErrorResponseModel{
+		// 	FieldName: "",
+		// 	Message: "An error occurred",
+		// }
 
-		errors := responses.NewErrorResponse(resErr)	
+		// errors := responses.NewErrorResponse(resErr)	
 
 
-		return nil, errors
+		return nil, constants.ErrGeneric
 	}
 
 	if user.ID == 0 {
-		err := responses.ErrorResponseModel{
-			FieldName: "email",
-			Message: constants.EmailIsTakenError,
-		}
+		// err := responses.ErrorResponseModel{
+		// 	FieldName: "email",
+		// 	Message: constants.EmailIsTakenError,
+		// }
 
-		errors := responses.NewErrorResponse(err)	
+		// errors := responses.NewErrorResponse(err)	
 
-		return nil, errors
+		return nil, constants.ErrEmailIsTaken
 	}
 
 	var salt = generateRandomSalt(saltSize)
@@ -65,15 +65,7 @@ func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthR
 	
 	newUser, err := as.repo.Create(user)
 	if err != nil {
-		resErr := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: "An error occurred",
-		}
-
-		errors := responses.NewErrorResponse(resErr)	
-
-
-		return nil, errors
+		return nil, constants.ErrGeneric
 	}
 
 	res, _ := generateAuthResponse(newUser)
@@ -81,29 +73,22 @@ func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthR
 	return res, nil
 }
 
-func (as *AuthService) Login (req requests.LoginRequest) (*responses.AuthResponse, *responses.ErrorResponse) {
+func (as *AuthService) Login (req requests.LoginRequest) (*responses.AuthResponse, error) {
 	user, _ := as.repo.GetByEmail(req.Email)
 
-	if user.ID == 0 {
-		err := responses.ErrorResponseModel{
-			FieldName: "email",
-			Message: constants.EmailIsTakenError,
-		}
-
-		errors := responses.NewErrorResponse(err)	
-
-		return nil, errors
+	if user.ID == 0 {	
+		return nil, constants.ErrEmailIsTaken
 	}
 
 	if !doPasswordsMatch(user.PasswordHash, req.Password, user.PasswordSalt) {
-		resErr := responses.ErrorResponseModel{
-			FieldName: "",
-			Message: "Wrong Password!",
-		}
+		// resErr := responses.ErrorResponseModel{
+		// 	FieldName: "",
+		// 	Message: "Wrong Password!",
+		// }
 
-		errors := responses.NewErrorResponse(resErr)
+		// errors := responses.NewErrorResponse(resErr)
 
-		return nil, errors
+		return nil, constants.ErrWrongPassword
 	}
 
 	res, _ := generateAuthResponse(user)
