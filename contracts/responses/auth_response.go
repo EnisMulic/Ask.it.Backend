@@ -1,10 +1,12 @@
 package responses
 
+type AuthResponseModel struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refreshToken"`
+}
+
 // swagger:response AuthResponse
 type AuthResponse struct {
 	// in: body
-	Data struct {
-		Token string
-		RefreshToken string
-	}
+	Data AuthResponseModel `json:"data"`
 }

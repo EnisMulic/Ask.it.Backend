@@ -314,31 +314,51 @@
     "AnswerResponseModel": {
       "type": "object",
       "properties": {
-        "Content": {
-          "type": "string"
-        },
-        "CreatedAt": {
+        "content": {
           "type": "string",
-          "format": "date-time"
+          "x-go-name": "Content"
         },
-        "Dislikes": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "ID": {
-          "type": "integer",
-          "format": "uint64"
-        },
-        "Likes": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "UpdatedAt": {
+        "createdAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
         },
-        "User": {
+        "dislikes": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Dislikes"
+        },
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "ID"
+        },
+        "likes": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Likes"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "UpdatedAt"
+        },
+        "user": {
           "$ref": "#/definitions/UserResponseModel"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "AuthResponseModel": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "type": "string",
+          "x-go-name": "RefreshToken"
+        },
+        "token": {
+          "type": "string",
+          "x-go-name": "Token"
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
@@ -360,36 +380,43 @@
     "QuestionResponseModel": {
       "type": "object",
       "properties": {
-        "Answers": {
+        "answers": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/AnswerResponseModel"
-          }
+          },
+          "x-go-name": "Answers"
         },
-        "Content": {
-          "type": "string"
-        },
-        "CreatedAt": {
+        "content": {
           "type": "string",
-          "format": "date-time"
+          "x-go-name": "Content"
         },
-        "Dislikes": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "ID": {
-          "type": "integer",
-          "format": "uint64"
-        },
-        "Likes": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "UpdatedAt": {
+        "createdAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-go-name": "CreatedAt"
         },
-        "User": {
+        "dislikes": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Dislikes"
+        },
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "ID"
+        },
+        "likes": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Likes"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "UpdatedAt"
+        },
+        "user": {
           "$ref": "#/definitions/UserResponseModel"
         }
       },
@@ -416,22 +443,27 @@
     "UserResponseModel": {
       "type": "object",
       "properties": {
-        "AnswerCount": {
+        "answerCount": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "x-go-name": "AnswerCount"
         },
-        "Email": {
-          "type": "string"
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
         },
-        "FirstName": {
-          "type": "string"
+        "firstName": {
+          "type": "string",
+          "x-go-name": "FirstName"
         },
-        "ID": {
+        "id": {
           "type": "integer",
-          "format": "uint64"
+          "format": "uint64",
+          "x-go-name": "ID"
         },
-        "LastName": {
-          "type": "string"
+        "lastName": {
+          "type": "string",
+          "x-go-name": "LastName"
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
@@ -449,22 +481,29 @@
         "items": {
           "$ref": "#/definitions/AnswerResponseModel"
         }
+      },
+      "headers": {
+        "previousPage": {
+          "type": "integer",
+          "format": "int64",
+          "description": "in: body "
+        }
       }
     },
     "AuthResponse": {
       "schema": {
-        "type": "object",
-        "properties": {
-          "RefreshToken": {
-            "type": "string"
-          },
-          "Token": {
-            "type": "string"
-          }
+        "$ref": "#/definitions/AuthResponseModel"
+      }
+    },
+    "PagedResponse": {
+      "headers": {
+        "previousPage": {
+          "type": "integer",
+          "format": "int64",
+          "description": "in: body "
         }
       }
     },
-    "PagedResponse": {},
     "QuestionResponse": {
       "schema": {
         "$ref": "#/definitions/QuestionResponseModel"
@@ -475,6 +514,13 @@
         "type": "array",
         "items": {
           "$ref": "#/definitions/QuestionResponseModel"
+        }
+      },
+      "headers": {
+        "previousPage": {
+          "type": "integer",
+          "format": "int64",
+          "description": "in: body "
         }
       }
     },
@@ -488,6 +534,13 @@
         "type": "array",
         "items": {
           "$ref": "#/definitions/UserResponseModel"
+        }
+      },
+      "headers": {
+        "previousPage": {
+          "type": "integer",
+          "format": "int64",
+          "description": "in: body "
         }
       }
     }

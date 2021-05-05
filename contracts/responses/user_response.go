@@ -1,48 +1,48 @@
 package responses
 
 type UserResponseModel struct {
-	ID          uint
-	FirstName   string
-	LastName    string
-	Email       string
-	AnswerCount int
+	ID          uint   `json:"id"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	Email       string `json:"email"`
+	AnswerCount int    `json:"answerCount"`
 }
 
 // swagger:response UserResponse
 type UserResponse struct {
 	// in: body
-	Data UserResponseModel
+	Data UserResponseModel `json:"data"`
 }
 
 // swagger:response UsersResponse
 type UsersResponse struct {
 	// in: body
-	Data []UserResponseModel
+	Data []UserResponseModel `json:"data"`
 	// in: body
 	PagedResponse
 }
 
 type UserQuestionRatingModel struct {
-	QuestionID uint
-	IsLiked    bool
+	QuestionID uint `json:"questionId"`
+	IsLiked    bool `json:"isLiked"`
 }
 
 type UserAnswerRatingModel struct {
-	AnswerID uint
-	IsLiked  bool
+	AnswerID uint `json:"answerId"`
+	IsLiked  bool `json:"isLiked"`
 }
 
 type UserPersonalInfoResponseModel struct {
-	ID                  uint
-	FirstName           string
-	LastName            string
-	Email               string
-	AnswerCount         int
-	QuestionRatings     []UserQuestionRatingModel
-	AnswerRatings       []UserAnswerRatingModel
-	AnswerNotifications []AnswerNotification
+	ID                  uint                      `json:"id"`
+	FirstName           string                    `json:"firstName"`
+	LastName            string                    `json:"lastName"`
+	Email               string                    `json:"email"`
+	AnswerCount         int                       `json:"answerCount"`
+	QuestionRatings     []UserQuestionRatingModel `json:"questionRatings"`
+	AnswerRatings       []UserAnswerRatingModel   `json:"answerRatings"`
+	AnswerNotifications []AnswerNotification      `json:"answerNotifications"`
 }
 
 type UserPersonalInfoResponse struct {
-	Data UserPersonalInfoResponseModel
+	Data UserPersonalInfoResponseModel `json:"data"`
 }

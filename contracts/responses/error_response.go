@@ -1,12 +1,12 @@
 package responses
 
 type ErrorResponseModel struct {
-	FieldName string
-	Message   string
+	FieldName string `json:"fieldName"`
+	Message   string `json:"message"`
 }
 
 type ErrorResponse struct {
-	Errors []ErrorResponseModel
+	Errors []ErrorResponseModel `json:"errors"`
 }
 
 func NewErrorResponse(err ErrorResponseModel) *ErrorResponse {

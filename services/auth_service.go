@@ -162,13 +162,10 @@ func generateAuthResponse(user domain.User) (*responses.AuthResponse, error) {
 		return nil, err
 	}
 
-	return &responses.AuthResponse{
-		Data: struct {
-			Token string
-			RefreshToken string
-		} {
-			Token: token,
-			RefreshToken: "",
-		},
-	}, nil
+	data := responses.AuthResponseModel{
+		Token: token,
+		RefreshToken: "",
+	}
+
+	return &responses.AuthResponse{Data: data}, nil
 }

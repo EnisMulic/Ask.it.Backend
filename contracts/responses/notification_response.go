@@ -1,10 +1,10 @@
 package responses
 
 type AnswerNotification struct {
-	ID         uint
-	QuestionID uint
-	AnswerID   uint
-	UserID     uint
-	Content    string
-	IsRead     bool
+	ID         uint   `json:"id"`
+	QuestionID uint   `json:"questionId"`
+	AnswerID   uint   `json:"answerId"`
+	UserID     uint   `json:"userId"`
+	Content    string `json:"content"`
+	IsRead     bool   `json:"isRead"`
 }
