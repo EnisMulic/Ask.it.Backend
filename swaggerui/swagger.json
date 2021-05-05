@@ -6,7 +6,8 @@
     "application/json"
   ],
   "schemes": [
-    "http"
+    "http",
+    "https"
   ],
   "swagger": "2.0",
   "info": {
@@ -22,9 +23,42 @@
           "answers"
         ],
         "operationId": "answer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
         "responses": {
           "200": {
-            "$ref": "#/responses/AnswerResponse"
+            "description": "AnswerResponse",
+            "schema": {
+              "$ref": "#/definitions/AnswerResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       },
@@ -32,7 +66,40 @@
         "tags": [
           "answers"
         ],
-        "operationId": "bool"
+        "operationId": "bool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/answers/{id}/dislike": {
@@ -40,7 +107,34 @@
         "tags": [
           "answers"
         ],
-        "operationId": "answer"
+        "operationId": "answer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/answers/{id}/dislike/undo": {
@@ -48,7 +142,34 @@
         "tags": [
           "answers"
         ],
-        "operationId": "answer"
+        "operationId": "answer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/answers/{id}/like": {
@@ -56,7 +177,34 @@
         "tags": [
           "answers"
         ],
-        "operationId": "answer"
+        "operationId": "answer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/answers/{id}/like/undo": {
@@ -64,7 +212,34 @@
         "tags": [
           "answers"
         ],
-        "operationId": "answer"
+        "operationId": "answer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/auth/login": {
@@ -72,10 +247,25 @@
         "tags": [
           "auth"
         ],
-        "operationId": "jwt",
+        "operationId": "auth",
         "responses": {
           "200": {
-            "$ref": "#/responses/AuthResponse"
+            "description": "AuthResponse",
+            "schema": {
+              "$ref": "#/definitions/AuthResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -85,7 +275,7 @@
         "tags": [
           "auth"
         ],
-        "operationId": "jwt",
+        "operationId": "auth",
         "parameters": [
           {
             "name": "request",
@@ -94,7 +284,16 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/AuthResponse"
+            "description": "AuthResponse",
+            "schema": {
+              "$ref": "#/definitions/AuthResponse"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ErrorReponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorReponse"
           }
         }
       }
@@ -108,7 +307,16 @@
         "operationId": "user",
         "responses": {
           "200": {
-            "$ref": "#/responses/UserResponse"
+            "description": "UserResponse",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -121,7 +329,22 @@
         "operationId": "questions",
         "responses": {
           "200": {
-            "$ref": "#/responses/QuestionsResponse"
+            "description": "QuestionsResponse",
+            "schema": {
+              "$ref": "#/definitions/QuestionsResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       },
@@ -132,7 +355,22 @@
         "operationId": "question",
         "responses": {
           "204": {
-            "$ref": "#/responses/QuestionResponse"
+            "description": "QuestionResponse",
+            "schema": {
+              "$ref": "#/definitions/QuestionResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -145,7 +383,22 @@
         "operationId": "questions",
         "responses": {
           "200": {
-            "$ref": "#/responses/QuestionsResponse"
+            "description": "QuestionsResponse",
+            "schema": {
+              "$ref": "#/definitions/QuestionsResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -156,9 +409,36 @@
           "questions"
         ],
         "operationId": "question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
         "responses": {
           "200": {
-            "$ref": "#/responses/QuestionResponse"
+            "description": "QuestionResponse",
+            "schema": {
+              "$ref": "#/definitions/QuestionResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       },
@@ -166,7 +446,40 @@
         "tags": [
           "questions"
         ],
-        "operationId": "bool"
+        "operationId": "bool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/questions/{id}/answers": {
@@ -175,9 +488,30 @@
           "questions"
         ],
         "operationId": "answer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
         "responses": {
           "204": {
-            "$ref": "#/responses/AnswerResponse"
+            "description": "AnswerResponse",
+            "schema": {
+              "$ref": "#/definitions/AnswerResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -187,7 +521,34 @@
         "tags": [
           "questions"
         ],
-        "operationId": "question"
+        "operationId": "question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/questions/{id}/dislike/undo": {
@@ -195,7 +556,34 @@
         "tags": [
           "questions"
         ],
-        "operationId": "question"
+        "operationId": "question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/questions/{id}/like": {
@@ -203,7 +591,34 @@
         "tags": [
           "questions"
         ],
-        "operationId": "question"
+        "operationId": "question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/questions/{id}/like/undo": {
@@ -211,7 +626,34 @@
         "tags": [
           "questions"
         ],
-        "operationId": "question"
+        "operationId": "question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/api/users": {
@@ -233,7 +675,10 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/UsersResponse"
+            "description": "UsersResponse",
+            "schema": {
+              "$ref": "#/definitions/UsersResponse"
+            }
           }
         }
       },
@@ -242,9 +687,44 @@
           "users"
         ],
         "operationId": "user",
+        "parameters": [
+          {
+            "name": "firstName",
+            "in": "body"
+          },
+          {
+            "name": "lastName",
+            "in": "body"
+          },
+          {
+            "name": "email",
+            "in": "body"
+          }
+        ],
         "responses": {
           "200": {
-            "$ref": "#/responses/UserResponse"
+            "description": "UserResponse",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -268,7 +748,10 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/UsersResponse"
+            "description": "UsersResponse",
+            "schema": {
+              "$ref": "#/definitions/UsersResponse"
+            }
           }
         }
       }
@@ -279,7 +762,31 @@
         "tags": [
           "users"
         ],
-        "operationId": "bool"
+        "operationId": "changePassword",
+        "parameters": [
+          {
+            "x-go-name": "Password",
+            "name": "password",
+            "in": "body",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "x-go-name": "NewPassword",
+            "name": "newPassword",
+            "in": "body",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "$ref": "#/responses/ErrorReponse"
+          }
+        }
       }
     },
     "/api/users/{id}": {
@@ -289,9 +796,24 @@
           "users"
         ],
         "operationId": "user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
         "responses": {
           "200": {
-            "$ref": "#/responses/UserResponse"
+            "description": "UserResponse",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "404": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -302,15 +824,79 @@
           "users"
         ],
         "operationId": "questions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
         "responses": {
           "200": {
-            "$ref": "#/responses/QuestionsResponse"
+            "description": "QuestionsResponse",
+            "schema": {
+              "$ref": "#/definitions/QuestionsResponse"
+            }
+          },
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
     }
   },
   "definitions": {
+    "AnswerNotification": {
+      "type": "object",
+      "properties": {
+        "answerId": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "AnswerID"
+        },
+        "content": {
+          "type": "string",
+          "x-go-name": "Content"
+        },
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "ID"
+        },
+        "isRead": {
+          "type": "boolean",
+          "x-go-name": "IsRead"
+        },
+        "questionId": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "QuestionID"
+        },
+        "userId": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "UserID"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "AnswerResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/AnswerResponseModel"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
     "AnswerResponseModel": {
       "type": "object",
       "properties": {
@@ -349,6 +935,65 @@
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     },
+    "AnswersResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "in: body",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AnswerResponseModel"
+          },
+          "x-go-name": "Date"
+        },
+        "firstPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "FirstPage"
+        },
+        "lastPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "LastPage"
+        },
+        "nextPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "NextPage"
+        },
+        "pageNumber": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageNumber"
+        },
+        "pageSize": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageSize"
+        },
+        "previousPage": {
+          "description": "in: body ",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PreviousPage"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "AuthResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/AuthResponseModel"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
     "AuthResponseModel": {
       "type": "object",
       "properties": {
@@ -359,6 +1004,75 @@
         "token": {
           "type": "string",
           "x-go-name": "Token"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorResponseModel"
+          },
+          "x-go-name": "Errors"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "ErrorResponseModel": {
+      "type": "object",
+      "properties": {
+        "fieldName": {
+          "type": "string",
+          "x-go-name": "FieldName"
+        },
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "PagedResponse": {
+      "type": "object",
+      "properties": {
+        "firstPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "FirstPage"
+        },
+        "lastPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "LastPage"
+        },
+        "nextPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "NextPage"
+        },
+        "pageNumber": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageNumber"
+        },
+        "pageSize": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageSize"
+        },
+        "previousPage": {
+          "description": "in: body ",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PreviousPage"
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
@@ -376,6 +1090,15 @@
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+    },
+    "QuestionResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/QuestionResponseModel"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     },
     "QuestionResponseModel": {
       "type": "object",
@@ -422,6 +1145,57 @@
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     },
+    "QuestionsResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "in: body",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/QuestionResponseModel"
+          },
+          "x-go-name": "Data"
+        },
+        "firstPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "FirstPage"
+        },
+        "lastPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "LastPage"
+        },
+        "nextPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "NextPage"
+        },
+        "pageNumber": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageNumber"
+        },
+        "pageSize": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageSize"
+        },
+        "previousPage": {
+          "description": "in: body ",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PreviousPage"
+        }
+      },
+      "x-go-name": "QuestionsReponse",
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
     "RegisterRequest": {
       "type": "object",
       "properties": {
@@ -439,6 +1213,103 @@
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+    },
+    "UserAnswerRatingModel": {
+      "type": "object",
+      "properties": {
+        "answerId": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "AnswerID"
+        },
+        "isLiked": {
+          "type": "boolean",
+          "x-go-name": "IsLiked"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "UserPersonalInfoResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/UserPersonalInfoResponseModel"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "UserPersonalInfoResponseModel": {
+      "type": "object",
+      "properties": {
+        "answerCount": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "AnswerCount"
+        },
+        "answerNotifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AnswerNotification"
+          },
+          "x-go-name": "AnswerNotifications"
+        },
+        "answerRatings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserAnswerRatingModel"
+          },
+          "x-go-name": "AnswerRatings"
+        },
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "firstName": {
+          "type": "string",
+          "x-go-name": "FirstName"
+        },
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "ID"
+        },
+        "lastName": {
+          "type": "string",
+          "x-go-name": "LastName"
+        },
+        "questionRatings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserQuestionRatingModel"
+          },
+          "x-go-name": "QuestionRatings"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "UserQuestionRatingModel": {
+      "type": "object",
+      "properties": {
+        "isLiked": {
+          "type": "boolean",
+          "x-go-name": "IsLiked"
+        },
+        "questionId": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "QuestionID"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/UserResponseModel"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     },
     "UserResponseModel": {
       "type": "object",
@@ -467,82 +1338,56 @@
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
-    }
-  },
-  "responses": {
-    "AnswerResponse": {
-      "schema": {
-        "$ref": "#/definitions/AnswerResponseModel"
-      }
-    },
-    "AnswersResponse": {
-      "schema": {
-        "type": "array",
-        "items": {
-          "$ref": "#/definitions/AnswerResponseModel"
-        }
-      },
-      "headers": {
-        "previousPage": {
-          "type": "integer",
-          "format": "int64",
-          "description": "in: body "
-        }
-      }
-    },
-    "AuthResponse": {
-      "schema": {
-        "$ref": "#/definitions/AuthResponseModel"
-      }
-    },
-    "PagedResponse": {
-      "headers": {
-        "previousPage": {
-          "type": "integer",
-          "format": "int64",
-          "description": "in: body "
-        }
-      }
-    },
-    "QuestionResponse": {
-      "schema": {
-        "$ref": "#/definitions/QuestionResponseModel"
-      }
-    },
-    "QuestionsResponse": {
-      "schema": {
-        "type": "array",
-        "items": {
-          "$ref": "#/definitions/QuestionResponseModel"
-        }
-      },
-      "headers": {
-        "previousPage": {
-          "type": "integer",
-          "format": "int64",
-          "description": "in: body "
-        }
-      }
-    },
-    "UserResponse": {
-      "schema": {
-        "$ref": "#/definitions/UserResponseModel"
-      }
     },
     "UsersResponse": {
-      "schema": {
-        "type": "array",
-        "items": {
-          "$ref": "#/definitions/UserResponseModel"
-        }
-      },
-      "headers": {
-        "previousPage": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "in: body",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserResponseModel"
+          },
+          "x-go-name": "Data"
+        },
+        "firstPage": {
+          "description": "in: body",
           "type": "integer",
           "format": "int64",
-          "description": "in: body "
+          "x-go-name": "FirstPage"
+        },
+        "lastPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "LastPage"
+        },
+        "nextPage": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "NextPage"
+        },
+        "pageNumber": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageNumber"
+        },
+        "pageSize": {
+          "description": "in: body",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PageSize"
+        },
+        "previousPage": {
+          "description": "in: body ",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PreviousPage"
         }
-      }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     }
   }
 }

@@ -17,5 +17,5 @@ var (
 	ErrUserNotFound = errors.New("user not found")
 	ErrQuestionNotFound = errors.New("question not found")
 	ErrAnswerNotFound = errors.New("answer not found")
-	ErrUnauthorized = errors.New("unauthorized")
+	ErrForbidden = errors.New("forbidden")
 )

@@ -39,6 +39,7 @@ func NewUserController(l *log.Logger, us *services.UserService) *UserController 
 // + name: pageSize
 //	 in: query
 //	 schema: int
+//
 // responses:
 //	200: UsersResponse
 func (uc *UserController) Get(rw http.ResponseWriter, r *http.Request) {
@@ -69,6 +70,7 @@ func (uc *UserController) Get(rw http.ResponseWriter, r *http.Request) {
 // + name: pageSize
 //	 in: query
 //	 schema: int
+//
 // responses:
 //	200: UsersResponse
 func (uc *UserController) GetTop(rw http.ResponseWriter, r *http.Request) {
@@ -92,8 +94,14 @@ func (uc *UserController) GetTop(rw http.ResponseWriter, r *http.Request) {
 // swagger:route GET /api/users/{id} users user
 // Returns a single user
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
 // responses:
 //	200: UserResponse
+//	404: ErrorResponse
 func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -134,6 +142,7 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //	200: UserResponse
+//  400: ErrorResponse
 func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 	sub, err := utils.ExtractSubFromJwt(r)
 
@@ -174,8 +183,12 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route POST /api/users/change-password users bool
+// swagger:route POST /api/users/change-password users changePassword
 // Change users password
+//
+// responses:
+//	200: 
+//  400: ErrorReponse
 func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request) {
 	sub, err := utils.ExtractSubFromJwt(r)
 
@@ -224,8 +237,22 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 
 // swagger:route PUT /api/users users user
 //
+// parameters:
+// + name: firstName
+//	 in: body
+//	 schema: string
+// + name: lastName
+//	 in: body
+//	 schema: string
+// + name: email
+//	 in: body
+//	 schema: body
+//
 // responses:
 //	200: UserResponse
+//  400: ErrorResponse
+//  404: ErrorResponse
+//  500: ErrorResponse
 func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 	sub, err := utils.ExtractSubFromJwt(r)
 
@@ -291,8 +318,15 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route GET /api/users/{id}/questions users questions
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
 // responses:
 //	200: QuestionsResponse
+//  400: ErrorResponse
+//  500: ErrorResponse
 func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) {
 	var request requests.QuestionSearchRequest
 

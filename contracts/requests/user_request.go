@@ -24,7 +24,10 @@ type LoginRequest struct {
 	Password string `schema:"password"`
 }
 
+// swagger:parameters changePassword
 type ChangePasswordRequest struct {
-	Password string `schema:"password"`
-	NewPassword string `schame:"newPassword"`
+	// in: body
+	Password string `json:"password"`
+	// in: body
+	NewPassword string `json:"newPassword"`
 }

@@ -1,10 +1,12 @@
 package responses
 
+// swagger:model ErrorResponseModel
 type ErrorResponseModel struct {
 	FieldName string `json:"fieldName"`
 	Message   string `json:"message"`
 }
 
+// swagger:model ErrorResponse
 type ErrorResponse struct {
 	Errors []ErrorResponseModel `json:"errors"`
 }

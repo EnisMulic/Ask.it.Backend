@@ -28,6 +28,8 @@ func NewQuestionController(l *log.Logger, qs *services.QuestionService) *Questio
 //
 // responses:
 //	200: QuestionsResponse
+//	400: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 	var request requests.QuestionSearchRequest
 
@@ -62,8 +64,12 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route GET /api/questions-top questions questions 
 //
+// parameters: PaginationQuery
+//
 // responses:
 //	200: QuestionsResponse
+//	400: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) GetHot(rw http.ResponseWriter, r *http.Request) {
 	var request requests.QuestionSearchRequest
 
@@ -96,8 +102,16 @@ func (qc *QuestionController) GetHot(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route GET /api/questions/{id} questions question
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
 // responses:
 //	200: QuestionResponse
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -140,6 +154,8 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //	204: QuestionResponse
+//	400: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 	sub, err := utils.ExtractSubFromJwt(r)
 	
@@ -201,6 +217,17 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route DELETE /api/questions/{id} questions bool
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	204: 
+//	400: ErrorResponse
+//	403: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -242,8 +269,8 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 
 		if err == constants.ErrQuestionNotFound {
 			http.Error(rw, string(out), http.StatusNotFound)
-		} else if err == constants.ErrUnauthorized {
-			http.Error(rw, string(out), http.StatusUnauthorized)
+		} else if err == constants.ErrForbidden {
+			http.Error(rw, string(out), http.StatusForbidden)
 		}
 		return
 	}
@@ -253,6 +280,16 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/questions/{id}/like questions question
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	200: 
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -299,6 +336,16 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/questions/{id}/like/undo questions question
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	200: 
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -345,6 +392,16 @@ func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request)
 
 // swagger:route POST /api/questions/{id}/dislike questions question
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	200: 
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -391,6 +448,16 @@ func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) 
 
 // swagger:route POST /api/questions/{id}/dislike/undo questions question
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	200: 
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -437,8 +504,15 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 
 // swagger:route POST /api/questions/{id}/answers questions answer
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
 // responses:
 //	204: AnswerResponse
+//	400: ErrorResponse
+//  500: ErrorResponse
 func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 

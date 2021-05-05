@@ -1,5 +1,6 @@
 package responses
 
+// swagger:model AnswerNotification
 type AnswerNotification struct {
 	ID         uint   `json:"id"`
 	QuestionID uint   `json:"questionId"`

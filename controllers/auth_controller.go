@@ -20,10 +20,12 @@ func NewAuthController(l *log.Logger, as *services.AuthService) *AuthController 
 	return &AuthController{l, as}
 }
 
-// swagger:route POST /api/auth/login auth jwt
+// swagger:route POST /api/auth/login auth auth
 //
 // responses:
 //	200: AuthResponse
+//  400: ErrorResponse
+//  500: ErrorResponse
 func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 	var req requests.LoginRequest
 
@@ -61,16 +63,18 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route POST /api/auth/register auth jwt
+// swagger:route POST /api/auth/register auth auth
 //
 // parameters:
 // + name: request
 //   in: body
-//   schema:
-//    "$ref": "#/definitions/RegisterRequest"
+//   schema: 
+//		$ref: "#/definitions/RegisterRequest"
 //
 // responses:
 //	200: AuthResponse
+//  400: ErrorReponse
+//  500: ErrorReponse
 func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 	var req requests.RegisterRequest
 

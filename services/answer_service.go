@@ -34,7 +34,7 @@ func (as *AnswerService) Update (
 	}
 
 	if answer.UserID != userId {
-		return nil, constants.ErrUnauthorized
+		return nil, constants.ErrForbidden
 	}
 
 	updatedAnswer := domain.Answer{
@@ -65,7 +65,7 @@ func (as *AnswerService) Delete(answerId uint, userId uint ) error {
 	}
 
 	if answer.UserID != userId {
-		return constants.ErrUnauthorized
+		return constants.ErrForbidden
 	}
 
 	err = as.answerRepo.Delete(answer)

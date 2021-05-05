@@ -2,6 +2,7 @@ package responses
 
 import "time"
 
+// swagger:model AnswerResponseModel
 type AnswerResponseModel struct {
 	ID        uint `json:"id"`
 	Content   string `json:"content"`
@@ -12,13 +13,13 @@ type AnswerResponseModel struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// swagger:response AnswerResponse
+// swagger:model AnswerResponse
 type AnswerResponse struct {
 	// in: body
 	Data AnswerResponseModel `json:"data"`
 }
 
-// swagger:response AnswersResponse
+// swagger:model AnswersResponse
 type AnswersResponse struct {
 	// in: body
 	Date []AnswerResponseModel `json:"data"`

@@ -129,7 +129,7 @@ func (qs *QuestionService) Delete (questionId uint, userId uint) error {
 	}
 
 	if question.UserID != userId {
-		return constants.ErrUnauthorized
+		return constants.ErrForbidden
 	}
 
 	qs.repo.Delete(question)

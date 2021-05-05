@@ -24,8 +24,17 @@ func NewAnswerController(as *services.AnswerService) *AnswerController {
 
 // swagger:route PUT /api/answers/{id} answers answer
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
 // responses:
 //	200: AnswerResponse
+//	400: ErrorResponse
+//	403: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -84,8 +93,8 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 
 		if err == constants.ErrAnswerNotFound {
 			http.Error(rw, string(out), http.StatusNotFound)
-		} else if err == constants.ErrUnauthorized {
-			http.Error(rw, string(out), http.StatusUnauthorized)
+		} else if err == constants.ErrForbidden {
+			http.Error(rw, string(out), http.StatusForbidden)
 		} else {
 			http.Error(rw, string(out), http.StatusInternalServerError)
 		}
@@ -106,6 +115,17 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route DELETE /api/answers/{id} answers bool
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	204: 
+//	400: ErrorResponse
+//	403: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -148,8 +168,8 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 
 		if err == constants.ErrAnswerNotFound {
 			http.Error(rw, string(out), http.StatusNotFound)
-		} else if err == constants.ErrUnauthorized {
-			http.Error(rw, string(out), http.StatusUnauthorized)
+		} else if err == constants.ErrForbidden {
+			http.Error(rw, string(out), http.StatusForbidden)
 		} else {
 			http.Error(rw, string(out), http.StatusInternalServerError)
 		}
@@ -161,6 +181,16 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/answers/{id}/like answers answer
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	200: 
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -208,6 +238,16 @@ func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/answers/{id}/like/undo answers answer
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	200: 
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -254,6 +294,16 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/answers/{id}/dislike answers answer
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	200: 
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -300,6 +350,16 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/answers/{id}/dislike/undo answers answer
 //
+// parameters:
+// + name: id
+//	 in: path
+//	 schema: int
+//
+// responses:
+//	200: 
+//	400: ErrorResponse
+//	404: ErrorResponse
+//  500: ErrorResponse
 func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 

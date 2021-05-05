@@ -1,6 +1,6 @@
 package responses
 
-// swagger:response PagedResponse
+// swagger:model PagedResponse
 type PagedResponse struct {
 	// in: body
 	PageNumber   int64 `json:"pageNumber"`

@@ -2,6 +2,7 @@ package responses
 
 import "time"
 
+// swagger:model QuestionResponseModel
 type QuestionResponseModel struct {
 	ID        uint `json:"id"`
 	Content   string `json:"content"`
@@ -14,13 +15,13 @@ type QuestionResponseModel struct {
 }
 
 
-// swagger:response QuestionResponse
+// swagger:model QuestionResponse
 type QuestionResponse struct {
 	// in: body
 	Data QuestionResponseModel `json:"data"`
 }
 
-// swagger:response QuestionsResponse
+// swagger:model QuestionsResponse
 type QuestionsReponse struct {
 	// in: body
 	Data []QuestionResponseModel `json:"data"`
