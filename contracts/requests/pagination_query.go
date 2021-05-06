@@ -1,7 +1,7 @@
 package requests
 
-// swagger:model PaginationQuery
+// swagger:parameters pagination
 type PaginationQuery struct {
-	PageNumber int `schema:"pageNumber"`
-	PageSize   int `schame:"pageSize"`
+	PageNumber int `json:"pageNumber"`
+	PageSize   int `json:"pageSize"`
 }

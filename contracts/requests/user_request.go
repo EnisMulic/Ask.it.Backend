@@ -1,33 +1,53 @@
 package requests
 
-// swagger:parameters UserSearchRequest
+// swagger:parameters userSearch
 type UserSearchRequest struct {
 	*PaginationQuery
 }
 
 type UserUpdateRequest struct {
-	FirstName string `schema:"firstName"`
-	LastName string `schema:"lastName"`
-	Email string `schema:"email"`
+	FirstName string `json:"firstName"`
+	LastName string `json:"lastName"`
+	Email string `json:"email"`
 }
 
-// swagger:model RegisterRequest
+// swagger:parameters userUpdate
+type UserUpdateRequestWrapper struct {
+	// in: body
+	Body UserUpdateRequest
+}
+
 type RegisterRequest struct {
-	FirstName string `schema:"firstName"`
-	LastName string `schema:"lastName"`
-	Email string `schema:"email"`
-	Password string `schema:"password"`
+	FirstName string `json:"firstName"`
+	LastName string `json:"lastName"`
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
+// swagger:parameters register
+type RegisterRequestWrapper struct {
+	// in: body
+	Body RegisterRequest
 }
 
 type LoginRequest struct {
-	Email string `schema:"email"`
-	Password string `schema:"password"`
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
+// swagger:parameters login
+type LoginRequestWrapper struct {
+	// in: body
+	Body LoginRequest
+}
+
+type ChangePasswordRequest struct {
+	Password string `json:"password"`
+	NewPassword string `json:"newPassword"`
 }
 
 // swagger:parameters changePassword
-type ChangePasswordRequest struct {
+type ChangePasswordRequestWrapper struct {
 	// in: body
-	Password string `json:"password"`
-	// in: body
-	NewPassword string `json:"newPassword"`
+	Body ChangePasswordRequest
 }

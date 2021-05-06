@@ -5,6 +5,11 @@
 // Host: localhost:5000
 // Version: 1.0.0
 //
+// SecurityDefinitions:
+//  Bearer:
+//     type: apiKey
+//     name: Authorization
+//     in: header
 //
 // Consumes:
 // - application/json

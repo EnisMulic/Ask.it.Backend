@@ -22,7 +22,10 @@ func NewAnswerController(as *services.AnswerService) *AnswerController {
 	return &AnswerController{as}
 }
 
-// swagger:route PUT /api/answers/{id} answers answer
+// swagger:route PUT /api/answers/{id} answers answerUpdate
+//
+// security:
+//  - Bearer: []
 //
 // parameters:
 // + name: id
@@ -115,6 +118,9 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route DELETE /api/answers/{id} answers bool
 //
+// security:
+//  - Bearer: []
+//
 // parameters:
 // + name: id
 //	 in: path
@@ -181,6 +187,9 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/answers/{id}/like answers answer
 //
+// security:
+//  - Bearer: []
+//
 // parameters:
 // + name: id
 //	 in: path
@@ -238,6 +247,9 @@ func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/answers/{id}/like/undo answers answer
 //
+// security:
+//  - Bearer: []
+//
 // parameters:
 // + name: id
 //	 in: path
@@ -294,6 +306,9 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/answers/{id}/dislike answers answer
 //
+// security:
+//  - Bearer: []
+//
 // parameters:
 // + name: id
 //	 in: path
@@ -349,6 +364,9 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 }
 
 // swagger:route POST /api/answers/{id}/dislike/undo answers answer
+//
+// security:
+//  - Bearer: []
 //
 // parameters:
 // + name: id

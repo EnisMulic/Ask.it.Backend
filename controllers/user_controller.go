@@ -29,16 +29,8 @@ func NewUserController(l *log.Logger, us *services.UserService) *UserController 
 	return &UserController{l, us}
 }
 
-// swagger:route GET /api/users users users
+// swagger:route GET /api/users users userSearch
 // Returns a list of users
-//
-// parameters:
-// + name: pageNumber
-//	 in: query
-//	 schema: int
-// + name: pageSize
-//	 in: query
-//	 schema: int
 //
 // responses:
 //	200: UsersResponse
@@ -60,16 +52,8 @@ func (uc *UserController) Get(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /api/users-top users users
+// swagger:route GET /api/users-top users userSearch
 // Returns a list of users
-//
-// parameters:
-// + name: pageNumber
-//	 in: query
-//	 schema: int
-// + name: pageSize
-//	 in: query
-//	 schema: int
 //
 // responses:
 //	200: UsersResponse
@@ -140,6 +124,9 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 // swagger:route GET /api/me users user
 // Returns information of the user that called the route
 //
+// security:
+//  - Bearer: []
+//
 // responses:
 //	200: UserResponse
 //  400: ErrorResponse
@@ -186,9 +173,12 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 // swagger:route POST /api/users/change-password users changePassword
 // Change users password
 //
+// security:
+//  - Bearer: []
+//
 // responses:
 //	200: 
-//  400: ErrorReponse
+//  400: ErrorResponse
 func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request) {
 	sub, err := utils.ExtractSubFromJwt(r)
 
@@ -235,18 +225,10 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 	}
 }
 
-// swagger:route PUT /api/users users user
+// swagger:route PUT /api/users users userUpdate
 //
-// parameters:
-// + name: firstName
-//	 in: body
-//	 schema: string
-// + name: lastName
-//	 in: body
-//	 schema: string
-// + name: email
-//	 in: body
-//	 schema: body
+// security:
+//  - Bearer: []
 //
 // responses:
 //	200: UserResponse
@@ -317,6 +299,9 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 }
 
 // swagger:route GET /api/users/{id}/questions users questions
+//
+// security:
+//  - Bearer: []
 //
 // parameters:
 // + name: id

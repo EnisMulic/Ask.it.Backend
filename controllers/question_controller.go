@@ -24,7 +24,7 @@ func NewQuestionController(l *log.Logger, qs *services.QuestionService) *Questio
 	return &QuestionController{l, qs}
 }
 
-// swagger:route GET /api/questions questions questions 
+// swagger:route GET /api/questions questions questionSearch 
 //
 // responses:
 //	200: QuestionsResponse
@@ -62,9 +62,7 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /api/questions-top questions questions 
-//
-// parameters: PaginationQuery
+// swagger:route GET /api/questions-top questions questionSearch
 //
 // responses:
 //	200: QuestionsResponse
@@ -150,7 +148,10 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route POST /api/questions questions question
+// swagger:route POST /api/questions questions questionInsert
+//
+// security:
+//  - Bearer: []
 //
 // responses:
 //	204: QuestionResponse
@@ -217,6 +218,9 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route DELETE /api/questions/{id} questions bool
 //
+// security:
+//  - Bearer: []
+//
 // parameters:
 // + name: id
 //	 in: path
@@ -280,6 +284,9 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route POST /api/questions/{id}/like questions question
 //
+// security:
+//  - Bearer: []
+//
 // parameters:
 // + name: id
 //	 in: path
@@ -335,6 +342,9 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 }
 
 // swagger:route POST /api/questions/{id}/like/undo questions question
+//
+// security:
+//  - Bearer: []
 //
 // parameters:
 // + name: id
@@ -392,6 +402,9 @@ func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request)
 
 // swagger:route POST /api/questions/{id}/dislike questions question
 //
+// security:
+//  - Bearer: []
+//
 // parameters:
 // + name: id
 //	 in: path
@@ -448,6 +461,9 @@ func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) 
 
 // swagger:route POST /api/questions/{id}/dislike/undo questions question
 //
+// security:
+//  - Bearer: []
+//
 // parameters:
 // + name: id
 //	 in: path
@@ -502,7 +518,10 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 	}
 }
 
-// swagger:route POST /api/questions/{id}/answers questions answer
+// swagger:route POST /api/questions/{id}/answers questions answerInsert
+//
+// security:
+//  - Bearer: []
 //
 // parameters:
 // + name: id

@@ -19,11 +19,25 @@
   "paths": {
     "/api/answers/{id}": {
       "put": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "answers"
         ],
-        "operationId": "answer",
+        "operationId": "answerUpdate",
         "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AnswerUpdateRequest"
+            }
+          },
           {
             "name": "id",
             "in": "path"
@@ -63,6 +77,13 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "answers"
         ],
@@ -104,6 +125,13 @@
     },
     "/api/answers/{id}/dislike": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "answers"
         ],
@@ -139,6 +167,13 @@
     },
     "/api/answers/{id}/dislike/undo": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "answers"
         ],
@@ -174,6 +209,13 @@
     },
     "/api/answers/{id}/like": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "answers"
         ],
@@ -209,6 +251,13 @@
     },
     "/api/answers/{id}/like/undo": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "answers"
         ],
@@ -247,7 +296,16 @@
         "tags": [
           "auth"
         ],
-        "operationId": "auth",
+        "operationId": "login",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "AuthResponse",
@@ -275,11 +333,14 @@
         "tags": [
           "auth"
         ],
-        "operationId": "auth",
+        "operationId": "register",
         "parameters": [
           {
-            "name": "request",
-            "in": "body"
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/RegisterRequest"
+            }
           }
         ],
         "responses": {
@@ -290,16 +351,29 @@
             }
           },
           "400": {
-            "$ref": "#/responses/ErrorReponse"
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           },
           "500": {
-            "$ref": "#/responses/ErrorReponse"
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
     },
     "/api/me": {
       "get": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "description": "Returns information of the user that called the route",
         "tags": [
           "users"
@@ -326,7 +400,23 @@
         "tags": [
           "questions"
         ],
-        "operationId": "questions",
+        "operationId": "questionSearch",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "PageNumber",
+            "name": "pageNumber",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "PageSize",
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "QuestionsResponse",
@@ -349,10 +439,26 @@
         }
       },
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "questions"
         ],
-        "operationId": "question",
+        "operationId": "questionInsert",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/QuestionInsertRequest"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "QuestionResponse",
@@ -380,7 +486,23 @@
         "tags": [
           "questions"
         ],
-        "operationId": "questions",
+        "operationId": "questionSearch",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "PageNumber",
+            "name": "pageNumber",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "PageSize",
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "QuestionsResponse",
@@ -443,6 +565,13 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "questions"
         ],
@@ -484,11 +613,25 @@
     },
     "/api/questions/{id}/answers": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "questions"
         ],
-        "operationId": "answer",
+        "operationId": "answerInsert",
         "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AnswerInsertRequest"
+            }
+          },
           {
             "name": "id",
             "in": "path"
@@ -518,6 +661,13 @@
     },
     "/api/questions/{id}/dislike": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "questions"
         ],
@@ -553,6 +703,13 @@
     },
     "/api/questions/{id}/dislike/undo": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "questions"
         ],
@@ -588,6 +745,13 @@
     },
     "/api/questions/{id}/like": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "questions"
         ],
@@ -623,6 +787,13 @@
     },
     "/api/questions/{id}/like/undo": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "questions"
         ],
@@ -662,13 +833,19 @@
         "tags": [
           "users"
         ],
-        "operationId": "users",
+        "operationId": "userSearch",
         "parameters": [
           {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "PageNumber",
             "name": "pageNumber",
             "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "PageSize",
             "name": "pageSize",
             "in": "query"
           }
@@ -683,22 +860,24 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "users"
         ],
-        "operationId": "user",
+        "operationId": "userUpdate",
         "parameters": [
           {
-            "name": "firstName",
-            "in": "body"
-          },
-          {
-            "name": "lastName",
-            "in": "body"
-          },
-          {
-            "name": "email",
-            "in": "body"
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserUpdateRequest"
+            }
           }
         ],
         "responses": {
@@ -735,13 +914,19 @@
         "tags": [
           "users"
         ],
-        "operationId": "users",
+        "operationId": "userSearch",
         "parameters": [
           {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "PageNumber",
             "name": "pageNumber",
             "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "PageSize",
             "name": "pageSize",
             "in": "query"
           }
@@ -758,6 +943,13 @@
     },
     "/api/users/change-password": {
       "post": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "description": "Change users password",
         "tags": [
           "users"
@@ -765,26 +957,20 @@
         "operationId": "changePassword",
         "parameters": [
           {
-            "x-go-name": "Password",
-            "name": "password",
+            "name": "Body",
             "in": "body",
             "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "x-go-name": "NewPassword",
-            "name": "newPassword",
-            "in": "body",
-            "schema": {
-              "type": "string"
+              "$ref": "#/definitions/ChangePasswordRequest"
             }
           }
         ],
         "responses": {
           "200": {},
           "400": {
-            "$ref": "#/responses/ErrorReponse"
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           }
         }
       }
@@ -820,6 +1006,13 @@
     },
     "/api/users/{id}/questions": {
       "get": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          }
+        ],
         "tags": [
           "users"
         ],
@@ -854,6 +1047,16 @@
     }
   },
   "definitions": {
+    "AnswerInsertRequest": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "x-go-name": "Content"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+    },
     "AnswerNotification": {
       "type": "object",
       "properties": {
@@ -935,6 +1138,16 @@
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     },
+    "AnswerUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "x-go-name": "Content"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+    },
     "AnswersResponse": {
       "type": "object",
       "properties": {
@@ -1008,6 +1221,20 @@
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     },
+    "ChangePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "newPassword": {
+          "type": "string",
+          "x-go-name": "NewPassword"
+        },
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+    },
     "ErrorResponse": {
       "type": "object",
       "properties": {
@@ -1034,6 +1261,20 @@
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
     },
     "PagedResponse": {
       "type": "object",
@@ -1077,16 +1318,12 @@
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     },
-    "PaginationQuery": {
+    "QuestionInsertRequest": {
       "type": "object",
       "properties": {
-        "PageNumber": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "PageSize": {
-          "type": "integer",
-          "format": "int64"
+        "content": {
+          "type": "string",
+          "x-go-name": "Content"
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
@@ -1199,17 +1436,21 @@
     "RegisterRequest": {
       "type": "object",
       "properties": {
-        "Email": {
-          "type": "string"
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
         },
-        "FirstName": {
-          "type": "string"
+        "firstName": {
+          "type": "string",
+          "x-go-name": "FirstName"
         },
-        "LastName": {
-          "type": "string"
+        "lastName": {
+          "type": "string",
+          "x-go-name": "LastName"
         },
-        "Password": {
-          "type": "string"
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
@@ -1339,6 +1580,24 @@
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
     },
+    "UserUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "firstName": {
+          "type": "string",
+          "x-go-name": "FirstName"
+        },
+        "lastName": {
+          "type": "string",
+          "x-go-name": "LastName"
+        }
+      },
+      "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/requests"
+    },
     "UsersResponse": {
       "type": "object",
       "properties": {
@@ -1388,6 +1647,13 @@
         }
       },
       "x-go-package": "github.com/EnisMulic/Ask.it.Backend/contracts/responses"
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }

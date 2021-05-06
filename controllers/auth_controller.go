@@ -20,7 +20,7 @@ func NewAuthController(l *log.Logger, as *services.AuthService) *AuthController 
 	return &AuthController{l, as}
 }
 
-// swagger:route POST /api/auth/login auth auth
+// swagger:route POST /api/auth/login auth login
 //
 // responses:
 //	200: AuthResponse
@@ -63,18 +63,12 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route POST /api/auth/register auth auth
-//
-// parameters:
-// + name: request
-//   in: body
-//   schema: 
-//		$ref: "#/definitions/RegisterRequest"
+// swagger:route POST /api/auth/register auth register
 //
 // responses:
 //	200: AuthResponse
-//  400: ErrorReponse
-//  500: ErrorReponse
+//  400: ErrorResponse
+//  500: ErrorResponse
 func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 	var req requests.RegisterRequest
 
