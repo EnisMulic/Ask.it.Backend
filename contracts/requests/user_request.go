@@ -1,6 +1,6 @@
 package requests
 
-// swagger:parameters userSearch
+// swagger:parameters usersSearch topUsersSearch
 type UserSearchRequest struct {
 	*PaginationQuery
 }

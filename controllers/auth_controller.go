@@ -9,6 +9,7 @@ import (
 	"github.com/EnisMulic/Ask.it.Backend/contracts/requests"
 	"github.com/EnisMulic/Ask.it.Backend/contracts/responses"
 	"github.com/EnisMulic/Ask.it.Backend/services"
+	"github.com/EnisMulic/Ask.it.Backend/utils"
 )
 
 type AuthController struct {
@@ -37,16 +38,19 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		out, _ := json.Marshal(errors)
-		http.Error(rw, string(out), http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
+
 		return
     } 
 
-	res, resErr := ac.as.Login(req)
-	if resErr != nil {
-		out, _ := json.Marshal(resErr)
+	res, err := ac.as.Login(req)
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+		
+		_ = json.NewEncoder(rw).Encode(errRes)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -56,9 +60,9 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
@@ -80,10 +84,13 @@ func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 		return
     } 
 
-	res, resErr := ac.as.Register(req)
-	if resErr != nil {
-		out, _ := json.Marshal(resErr)
-		http.Error(rw, string(out), http.StatusInternalServerError)
+	res, err := ac.as.Register(req)
+	if err != nil {
+		errRes := utils.ConvertToErrorResponse(err)
+		
+		_ = json.NewEncoder(rw).Encode(errRes)
+		rw.WriteHeader(http.StatusBadRequest)
+
 		return
 	}
 
@@ -93,9 +100,9 @@ func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }

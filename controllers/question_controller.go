@@ -24,7 +24,7 @@ func NewQuestionController(l *log.Logger, qs *services.QuestionService) *Questio
 	return &QuestionController{l, qs}
 }
 
-// swagger:route GET /api/questions questions questionSearch 
+// swagger:route GET /api/questions questions questionsSearch 
 //
 // responses:
 //	200: QuestionsResponse
@@ -41,9 +41,9 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToParseQueryParametars,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
@@ -55,14 +55,14 @@ func (qc *QuestionController) Get(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
 
-// swagger:route GET /api/questions-top questions questionSearch
+// swagger:route GET /api/questions-top questions hotQuestionsSearch
 //
 // responses:
 //	200: QuestionsResponse
@@ -77,9 +77,9 @@ func (qc *QuestionController) GetHot(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToParseQueryParametars,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
@@ -91,14 +91,14 @@ func (qc *QuestionController) GetHot(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
+		
 		return
 	}
 }
 
-// swagger:route GET /api/questions/{id} questions question
+// swagger:route GET /api/questions/{id} questions getQuestion
 //
 // parameters:
 // + name: id
@@ -119,9 +119,9 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -130,9 +130,9 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
 
-		out, _ := json.Marshal(errRes)
+		_ = json.NewEncoder(rw).Encode(errRes)
+		rw.WriteHeader(http.StatusNotFound)
 
-		http.Error(rw, string(out), http.StatusNotFound)
 		return
 	}
 
@@ -142,9 +142,8 @@ func (qc *QuestionController) GetById(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
@@ -161,8 +160,8 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 	sub, err := utils.ExtractSubFromJwt(r)
 	
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
-		return;
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	userId, err := strconv.ParseUint(sub, 10, 64)
@@ -171,9 +170,9 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -187,9 +186,9 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
@@ -197,10 +196,9 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
 
-		out, _ := json.Marshal(errRes)
+		_ = json.NewEncoder(rw).Encode(errRes)
+		rw.WriteHeader(http.StatusInternalServerError)
 
-
-		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 
@@ -210,13 +208,12 @@ func (qc *QuestionController) Create(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
-// swagger:route DELETE /api/questions/{id} questions bool
+// swagger:route DELETE /api/questions/{id} questions deleteQuestion
 //
 // security:
 //  - Bearer: []
@@ -241,17 +238,17 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
 	sub, err := utils.ExtractSubFromJwt(r)
 	
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
-		return;
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	userId, err := strconv.ParseUint(sub, 10, 64)
@@ -260,21 +257,22 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
 	err = qc.qs.Delete(uint(id), uint(userId))
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
-		out, _ := json.Marshal(errRes)
+
+		_ = json.NewEncoder(rw).Encode(errRes)
 
 		if err == constants.ErrQuestionNotFound {
-			http.Error(rw, string(out), http.StatusNotFound)
+			rw.WriteHeader(http.StatusNotFound)
 		} else if err == constants.ErrForbidden {
-			http.Error(rw, string(out), http.StatusForbidden)
+			rw.WriteHeader(http.StatusForbidden)
 		}
 		return
 	}
@@ -282,7 +280,7 @@ func (qc *QuestionController) Delete(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-// swagger:route POST /api/questions/{id}/like questions question
+// swagger:route POST /api/questions/{id}/like questions likeQuestion
 //
 // security:
 //  - Bearer: []
@@ -306,17 +304,17 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
 	sub, err := utils.ExtractSubFromJwt(r)
 	
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
-		return;
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	userId, err := strconv.ParseUint(sub, 10, 64)
@@ -325,23 +323,24 @@ func (qc *QuestionController) Like (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
 	err = qc.qs.Like(uint(id), uint(userId))
 	if err != nil {
 		resErr := utils.ConvertToErrorResponse(err)
-		out, _ := json.Marshal(resErr)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(resErr)
+		rw.WriteHeader(http.StatusInternalServerError)
+
 		return
 	}
 }
 
-// swagger:route POST /api/questions/{id}/like/undo questions question
+// swagger:route POST /api/questions/{id}/like/undo questions likeQuestionUndo
 //
 // security:
 //  - Bearer: []
@@ -365,17 +364,17 @@ func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request)
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
 	sub, err := utils.ExtractSubFromJwt(r)
 	
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
-		return;
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	userId, err := strconv.ParseUint(sub, 10, 64)
@@ -384,23 +383,24 @@ func (qc *QuestionController) LikeUndo (rw http.ResponseWriter, r *http.Request)
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
 	err = qc.qs.LikeUndo(uint(id), uint(userId))
 	if err != nil {
 		resErr := utils.ConvertToErrorResponse(err)
-		out, _ := json.Marshal(resErr)
+		
+		_ = json.NewEncoder(rw).Encode(resErr)
+		rw.WriteHeader(http.StatusInternalServerError)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
 
-// swagger:route POST /api/questions/{id}/dislike questions question
+// swagger:route POST /api/questions/{id}/dislike questions dislikeQuestion
 //
 // security:
 //  - Bearer: []
@@ -424,16 +424,16 @@ func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) 
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
 	sub, err := utils.ExtractSubFromJwt(r)
 	
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
+		rw.WriteHeader(http.StatusBadRequest)
 		return;
 	}
 
@@ -443,23 +443,24 @@ func (qc *QuestionController) Dislike (rw http.ResponseWriter, r *http.Request) 
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
 	err = qc.qs.Dislike(uint(id), uint(userId))
 	if err != nil {
 		resErr := utils.ConvertToErrorResponse(err)
-		out, _ := json.Marshal(resErr)
+		
+		_ = json.NewEncoder(rw).Encode(resErr)
+		rw.WriteHeader(http.StatusInternalServerError)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 }
 
-// swagger:route POST /api/questions/{id}/dislike/undo questions question
+// swagger:route POST /api/questions/{id}/dislike/undo questions undoQuestionDislike
 //
 // security:
 //  - Bearer: []
@@ -483,16 +484,16 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 	
 	sub, err := utils.ExtractSubFromJwt(r)
 	
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
+		rw.WriteHeader(http.StatusBadRequest)
 		return;
 	}
 
@@ -502,18 +503,19 @@ func (qc *QuestionController) DislikeUndo (rw http.ResponseWriter, r *http.Reque
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
 	err = qc.qs.DislikeUndo(uint(id), uint(userId))
 	if err != nil {
 		resErr := utils.ConvertToErrorResponse(err)
-		out, _ := json.Marshal(resErr)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(resErr)
+		rw.WriteHeader(http.StatusInternalServerError)
+
 		return
 	}
 }
@@ -541,16 +543,16 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
 	sub, err := utils.ExtractSubFromJwt(r)
 	
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
+		rw.WriteHeader(http.StatusBadRequest)
 		return;
 	}
 
@@ -560,9 +562,9 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -576,18 +578,19 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
 	question, err := qc.qs.CreateAnswer(uint(id), uint(userId), req)
 	if err != nil {
 		resErr := utils.ConvertToErrorResponse(err)
-		out, _ := json.Marshal(resErr)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(resErr)
+		rw.WriteHeader(http.StatusInternalServerError)
+
 		return
 	}
 
@@ -597,9 +600,9 @@ func (qc *QuestionController) CreateAnswer (rw http.ResponseWriter, r *http.Requ
 			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 
-		http.Error(rw, string(out), http.StatusInternalServerError)
 		return
 	}
 	//rw.WriteHeader(http.StatusCreated)

@@ -1,6 +1,6 @@
 package requests
 
-// swagger:parameters questionSearch
+// swagger:parameters questionsSearch hotQuestionsSearch
 type QuestionSearchRequest struct {
 	*PaginationQuery
 }

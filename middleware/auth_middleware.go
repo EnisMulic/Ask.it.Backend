@@ -22,16 +22,17 @@ func IsAuthorized(next http.Handler) http.Handler {
 
 			errors := responses.NewErrorResponse(resErr)
 
-			out, _ := json.Marshal(errors)
+			_ = json.NewEncoder(rw).Encode(errors)
+			rw.WriteHeader(http.StatusInternalServerError)
 
-			http.Error(rw, string(out), http.StatusBadRequest)
 			return
 		}
 
 		if !token.Valid {
-			http.Error(rw, "Unauthorized", http.StatusUnauthorized)
+			rw.WriteHeader(http.StatusUnauthorized)
 			return
 		}
+		
 		next.ServeHTTP(rw, r)
 	})
 }

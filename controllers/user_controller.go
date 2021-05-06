@@ -29,7 +29,7 @@ func NewUserController(l *log.Logger, us *services.UserService) *UserController 
 	return &UserController{l, us}
 }
 
-// swagger:route GET /api/users users userSearch
+// swagger:route GET /api/users users usersSearch
 // Returns a list of users
 //
 // responses:
@@ -40,7 +40,13 @@ func (uc *UserController) Get(rw http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&request, r.URL.Query())
     if err != nil {
         log.Println("Error in GET parameters : ", err)
-		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.ErrMsgUnableToParseQueryParametars,
+		})
+
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
+
 		return
     } 
 
@@ -48,11 +54,16 @@ func (uc *UserController) Get(rw http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(rw).Encode(users)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
-// swagger:route GET /api/users-top users userSearch
+// swagger:route GET /api/users-top users topUsersSearch
 // Returns a list of users
 //
 // responses:
@@ -63,7 +74,13 @@ func (uc *UserController) GetTop(rw http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&request, r.URL.Query())
     if err != nil {
         log.Println("Error in GET parameters : ", err)
-		http.Error(rw, "Unable to parse query parametars.", http.StatusBadRequest)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: constants.ErrMsgUnableToParseQueryParametars,
+		})
+
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
+
 		return
     } 
 
@@ -71,7 +88,12 @@ func (uc *UserController) GetTop(rw http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(rw).Encode(users)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: ErrorUnableToMarshalJson.Error(),
+		})
+
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
@@ -95,17 +117,22 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
-	user, errRes := uc.us.GetById(uint(id))
+	user, err := uc.us.GetById(uint(id))
+	
+	if err != nil {
+		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
+			Message: err.Error(),
+		})
 
-	if errRes != nil {
-		out, _ := json.Marshal(errRes)
-		http.Error(rw, string(out), http.StatusNotFound)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusNotFound)
+
 		return
 	}
 
@@ -115,13 +142,12 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
-// swagger:route GET /api/me users user
+// swagger:route GET /api/me users loggedInUser
 // Returns information of the user that called the route
 //
 // security:
@@ -134,8 +160,8 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 	sub, err := utils.ExtractSubFromJwt(r)
 
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
-		return;
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	
 	id, err := strconv.ParseUint(sub, 10, 64)
@@ -144,17 +170,18 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
 	user, errRes := uc.us.GetPersonalInfo(uint(id))
 
 	if errRes != nil {
-		out, _ := json.Marshal(errRes)
-		http.Error(rw, string(out), http.StatusNotFound)
+		_ = json.NewEncoder(rw).Encode(errRes)
+		rw.WriteHeader(http.StatusNotFound)
+
 		return
 	}
 
@@ -164,9 +191,8 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 	}
 }
 
@@ -183,8 +209,8 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 	sub, err := utils.ExtractSubFromJwt(r)
 
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
-		return;
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	id, err := strconv.ParseUint(sub, 10, 64)
@@ -193,9 +219,9 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -209,19 +235,19 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
 	errRes := uc.us.ChangePassword(uint(id), req)
 
 	if errRes != nil {
-		out, _ := json.Marshal(errRes)
+		_ = json.NewEncoder(rw).Encode(errRes)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
-		return;
+		return
 	}
 }
 
@@ -239,8 +265,8 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 	sub, err := utils.ExtractSubFromJwt(r)
 
 	if err != nil {
-		http.Error(rw, "", http.StatusBadRequest)
-		return;
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	id, err := strconv.ParseUint(sub, 10, 64)
@@ -249,9 +275,9 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
 	}
 
@@ -265,9 +291,9 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
+		
 		return
     } 
 
@@ -275,12 +301,12 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		resErr := utils.ConvertToErrorResponse(err)
-		out, _ := json.Marshal(resErr)
+		_ = json.NewEncoder(rw).Encode(resErr)
 
 		if err == constants.ErrUserNotFound {
-			http.Error(rw, string(out), http.StatusNotFound)
+			rw.WriteHeader(http.StatusNotFound)
 		} else if err == constants.ErrEmailIsTaken {
-			http.Error(rw, string(out), http.StatusBadRequest)
+			rw.WriteHeader(http.StatusBadRequest)
 		}
 
 		return
@@ -292,13 +318,12 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
-// swagger:route GET /api/users/{id}/questions users questions
+// swagger:route GET /api/users/{id}/questions users listUserQuestions
 //
 // security:
 //  - Bearer: []
@@ -321,9 +346,9 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 			Message: constants.ErrMsgUnableToParseQueryParametars,
 		})
 
-		out, _ := json.Marshal(errors)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
 
-		http.Error(rw, string(out), http.StatusBadRequest)
 		return
     } 
 
@@ -335,19 +360,20 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusBadRequest)
+		
 		return
 	}
 
 	questions, err := uc.us.GetQuestions(uint(id), request)
 	if err != nil {
 		resErr := utils.ConvertToErrorResponse(err)
-		out, _ := json.Marshal(resErr)
-
-		http.Error(rw, string(out), http.StatusBadRequest)
-		return;
+		
+		_ = json.NewEncoder(rw).Encode(resErr)
+		rw.WriteHeader(http.StatusBadRequest)
+		
+		return
 	}
 
 	err = json.NewEncoder(rw).Encode(questions)
@@ -356,8 +382,7 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		out, _ := json.Marshal(errors)
-
-		http.Error(rw, string(out), http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
