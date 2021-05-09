@@ -54,11 +54,13 @@ func main() {
 	userService := services.NewUserService(userRepo, questionRepo)
 	questionService := services.NewQuestionService(questionRepo, questionRatingRepo, answerRepo, answerNotificationRepo, pool)
 	answerService := services.NewAnswerRepository(answerRepo, answerRatingRepo)
+	answerNotificationService := services.NewAnswerNotificationService(answerNotificationRepo)
 
 	ac := controllers.NewAuthController(logger, authSevice)
 	uc := controllers.NewUserController(logger, userService)
 	qc := controllers.NewQuestionController(logger, questionService)
 	answc := controllers.NewAnswerController(answerService)
+	answnc := controllers.NewAnswerNotificationController(answerNotificationService)
 	
 	r := mux.NewRouter().StrictSlash(true)
 
@@ -139,6 +141,12 @@ func main() {
 	answerDeleteRouter.HandleFunc(constants.DeleteAnswerRoute, answc.Delete)
 	answerDeleteRouter.Use(middleware.AddContentType)
 	answerDeleteRouter.Use(middleware.IsAuthorized)
+
+	// answer notification routers 
+	answerNotificationPostRouter := r.Methods(http.MethodPost).Subrouter()
+	answerNotificationPostRouter.HandleFunc(constants.MarkReadAnswerNotificationRoute, answnc.MarkRead)
+	answerNotificationPostRouter.Use(middleware.AddContentType)
+	answerNotificationPostRouter.Use(middleware.IsAuthorized)
 
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swaggerui/"))))
 	

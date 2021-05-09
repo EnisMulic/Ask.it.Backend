@@ -63,7 +63,7 @@ func (ur *UserRepository) GetById (id uint) domain.User {
 
 func (ur *UserRepository) GetPersonalInfo(id uint) domain.User {
 	var user domain.User
-	ur.db.Preload("AnswerNotifications").Preload("UserQuestionRatings").Preload("UserAnswerRatings").First(&user, id)
+	ur.db.Preload("AnswerNotifications", "is_read = ?", false).Preload("UserQuestionRatings").Preload("UserAnswerRatings").First(&user, id)
 	return user
 }
 

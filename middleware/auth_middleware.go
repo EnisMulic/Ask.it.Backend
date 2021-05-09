@@ -22,8 +22,8 @@ func IsAuthorized(next http.Handler) http.Handler {
 
 			errors := responses.NewErrorResponse(resErr)
 
-			_ = json.NewEncoder(rw).Encode(errors)
 			rw.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(rw).Encode(errors)
 
 			return
 		}

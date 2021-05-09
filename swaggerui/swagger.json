@@ -17,6 +17,29 @@
   },
   "host": "localhost:5000",
   "paths": {
+    "/api/answer-notifications/{id}": {
+      "post": {
+        "tags": [
+          "answer-notifications"
+        ],
+        "operationId": "markRead",
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "ErrorResponse",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/api/answers/{id}": {
       "put": {
         "security": [

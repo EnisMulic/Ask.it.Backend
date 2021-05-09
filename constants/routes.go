@@ -36,5 +36,8 @@ const (
 	DislikeAnswerRoute     = AnswerBaseRoute + "/{id}/dislike"
 	DislikeAnswerUndoRoute = AnswerBaseRoute + "/{id}/dislike/undo"
 
+	AnswerNotificationBaseRoute = ApiRoot + "/answer-notifications"
+	MarkReadAnswerNotificationRoute = AnswerNotificationBaseRoute + "/{id}"
+	
 	NotificationRoute = "/ws/notifications/{id}"
 )
