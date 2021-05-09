@@ -47,8 +47,8 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -66,8 +66,8 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -82,8 +82,8 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
     } 
@@ -91,11 +91,6 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 	user, err := ac.as.Update(uint(id), uint(userId), req)
 	
 	if err != nil {
-		errRes := utils.ConvertToErrorResponse(err)
-
-		_ = json.NewEncoder(rw).Encode(errRes)
-		rw.WriteHeader(http.StatusBadRequest)
-
 		if err == constants.ErrAnswerNotFound {
 			rw.WriteHeader(http.StatusNotFound)
 		} else if err == constants.ErrForbidden {
@@ -103,6 +98,10 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 		} else {
 			rw.WriteHeader(http.StatusInternalServerError)
 		}
+
+		errRes := utils.ConvertToErrorResponse(err)
+		_ = json.NewEncoder(rw).Encode(errRes)
+
 		return
 	}
 
@@ -112,8 +111,8 @@ func (ac *AnswerController) Update (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToMarshalJson,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
 	}
 }
 
@@ -142,8 +141,8 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -161,8 +160,8 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -170,10 +169,6 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 	err = ac.as.Delete(uint(id), uint(userId))
 
 	if err != nil {
-		errRes := utils.ConvertToErrorResponse(err)
-
-		_ = json.NewEncoder(rw).Encode(errRes)
-
 		if err == constants.ErrAnswerNotFound {
 			rw.WriteHeader(http.StatusNotFound)
 		} else if err == constants.ErrForbidden {
@@ -181,6 +176,10 @@ func (ac *AnswerController) Delete (rw http.ResponseWriter, r *http.Request) {
 		} else {
 			rw.WriteHeader(http.StatusInternalServerError)
 		}
+
+		errRes := utils.ConvertToErrorResponse(err)
+		_ = json.NewEncoder(rw).Encode(errRes)
+
 		return
 	}
 
@@ -211,8 +210,8 @@ func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusNotFound)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -230,8 +229,8 @@ func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -240,8 +239,9 @@ func (ac *AnswerController) Like (rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
 
-		_ = json.NewEncoder(rw).Encode(errRes)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errRes)
+
 		return
 	}
 }
@@ -271,8 +271,8 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -290,8 +290,8 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -300,8 +300,8 @@ func (ac *AnswerController) LikeUndo (rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
 		
-		_ = json.NewEncoder(rw).Encode(errRes)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errRes)
 
 		return
 	}
@@ -331,8 +331,8 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -350,8 +350,8 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -360,8 +360,8 @@ func (ac *AnswerController) Dislike (rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
 		
-		_ = json.NewEncoder(rw).Encode(errRes)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errRes)
 
 		return
 	}
@@ -391,8 +391,8 @@ func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 		
 		return
 	}
@@ -410,8 +410,8 @@ func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request
 			Message: constants.ErrMsgUnableToConvertUserId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)	
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -420,8 +420,8 @@ func (ac *AnswerController) DislikeUndo (rw http.ResponseWriter, r *http.Request
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
 		
-		_ = json.NewEncoder(rw).Encode(errRes)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errRes)
 
 		return
 	}

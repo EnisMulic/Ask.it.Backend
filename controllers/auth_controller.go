@@ -38,8 +38,8 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
     } 
@@ -48,8 +48,8 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
 		
-		_ = json.NewEncoder(rw).Encode(errRes)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errRes)
 
 		return
 	}
@@ -60,8 +60,8 @@ func (ac *AuthController) Login(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -88,8 +88,8 @@ func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errRes := utils.ConvertToErrorResponse(err)
 		
-		_ = json.NewEncoder(rw).Encode(errRes)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errRes)
 
 		return
 	}
@@ -100,8 +100,8 @@ func (ac *AuthController) Register(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}

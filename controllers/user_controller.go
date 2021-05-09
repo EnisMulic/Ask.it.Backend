@@ -110,16 +110,16 @@ func (uc *UserController) GetTop(rw http.ResponseWriter, r *http.Request) {
 //	404: ErrorResponse
 func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
+	
 	id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		errors := responses.NewErrorResponse(responses.ErrorResponseModel{
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
-
+		_ = json.NewEncoder(rw).Encode(errors)
+		
 		return
 	}
 
@@ -130,9 +130,9 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 			Message: err.Error(),
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusNotFound)
-
+		_ = json.NewEncoder(rw).Encode(errors)
+		
 		return
 	}
 
@@ -142,8 +142,8 @@ func (uc *UserController) GetById(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
 	}
 }
 
@@ -170,8 +170,8 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -179,8 +179,8 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 	user, errRes := uc.us.GetPersonalInfo(uint(id))
 
 	if errRes != nil {
-		_ = json.NewEncoder(rw).Encode(errRes)
 		rw.WriteHeader(http.StatusNotFound)
+		_ = json.NewEncoder(rw).Encode(errRes)
 
 		return
 	}
@@ -191,8 +191,8 @@ func (uc *UserController) GetMe(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 	}
 }
 
@@ -219,8 +219,8 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -235,8 +235,8 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
     } 
@@ -244,8 +244,8 @@ func (uc *UserController) ChangePassword(rw http.ResponseWriter, r *http.Request
 	errRes := uc.us.ChangePassword(uint(id), req)
 
 	if errRes != nil {
-		_ = json.NewEncoder(rw).Encode(errRes)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errRes)
 
 		return
 	}
@@ -275,8 +275,8 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
 	}
@@ -291,8 +291,8 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 			Message: constants.ErrMsgUnableToParseJSONBody,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 		
 		return
     } 
@@ -300,14 +300,14 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 	user, err := uc.us.Update(uint(id), req)
 
 	if err != nil {
-		resErr := utils.ConvertToErrorResponse(err)
-		_ = json.NewEncoder(rw).Encode(resErr)
-
 		if err == constants.ErrUserNotFound {
 			rw.WriteHeader(http.StatusNotFound)
 		} else if err == constants.ErrEmailIsTaken {
 			rw.WriteHeader(http.StatusBadRequest)
 		}
+
+		resErr := utils.ConvertToErrorResponse(err)
+		_ = json.NewEncoder(rw).Encode(resErr)
 
 		return
 	}
@@ -318,8 +318,8 @@ func (uc *UserController) Update(rw http.ResponseWriter, r *http.Request) {
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
 	}
 }
 
@@ -346,8 +346,8 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 			Message: constants.ErrMsgUnableToParseQueryParametars,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 
 		return
     } 
@@ -360,8 +360,8 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 			Message: constants.ErrMsgUnableToConvertId,
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(errors)
 		
 		return
 	}
@@ -370,8 +370,8 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		resErr := utils.ConvertToErrorResponse(err)
 		
-		_ = json.NewEncoder(rw).Encode(resErr)
 		rw.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(rw).Encode(resErr)
 		
 		return
 	}
@@ -382,7 +382,7 @@ func (uc *UserController) GetQuestions(rw http.ResponseWriter, r *http.Request) 
 			Message: ErrorUnableToMarshalJson.Error(),
 		})
 
-		_ = json.NewEncoder(rw).Encode(errors)
 		rw.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(rw).Encode(errors)
 	}
 }
