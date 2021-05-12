@@ -27,28 +27,9 @@ func NewAuthService(repo *repositories.UserRepository) *AuthService {
 }
 
 func (as *AuthService) Register (req requests.RegisterRequest) (*responses.AuthResponse, error) {
-	user, err := as.repo.GetByEmail(req.Email)
+	user, _ := as.repo.GetByEmail(req.Email)
 
-	if err != nil {
-		// resErr := responses.ErrorResponseModel{
-		// 	FieldName: "",
-		// 	Message: "An error occurred",
-		// }
-
-		// errors := responses.NewErrorResponse(resErr)	
-
-
-		return nil, constants.ErrGeneric
-	}
-
-	if user.ID == 0 {
-		// err := responses.ErrorResponseModel{
-		// 	FieldName: "email",
-		// 	Message: constants.EmailIsTakenError,
-		// }
-
-		// errors := responses.NewErrorResponse(err)	
-
+	if user.Email == req.Email {
 		return nil, constants.ErrEmailIsTaken
 	}
 
